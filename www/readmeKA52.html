@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 function setupNavigation(){document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+b.dataset.tab).classList.add('active');});}
-function setupModeSwitcher(){document.querySelectorAll('.mode-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mode-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');currentMode=b.dataset.mode;renderKeypad(); updateContextInfo();});}
+function setupModeSwitcher(){document.querySelectorAll('#tab-keyboard .mode-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tab-keyboard .mode-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');currentMode=b.dataset.mode;renderKeypad(); updateContextInfo();});}
 function updateContextInfo(){ document.getElementById('mode-context-info').innerHTML = contextInfo[currentMode] || ''; }
 function setupFilters(){
   document.querySelectorAll('#menu-filters .filter-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#menu-filters .filter-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');filterMenu();});
