@@ -128,7 +128,7 @@ body { padding-bottom: 80px; }
     <h1>КА-52 Alligator </h1>
     <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">Quansheng UV-K1 и UV-K5V3</div>
   </div>
-  <span style="font-size:1 rem;color:var(--text-dim);font-weight:800;">Инструкция</span>
+  <span style="font-size:1 rem;color:var(--text-dim);font-weight:400;">Инструкция</span>
   <span class="badge">ka52.ouro.V.5.1.8</span>
 </div>
 
