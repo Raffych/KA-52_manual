@@ -11,6 +11,7 @@
   --text: #e8edf5; --text-dim: #8892a4; --primary: #ef4444; --primary-dim: #dc2626;
   --accent: #10b981; --warn: #f59e0b; --danger: #ef4444; --radius: 0px;
   --shadow: 0 4px 16px rgba(0,0,0,0.4);
+  --key-blue: #3b82f6; --key-blue-dim: #2563eb;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html, body { height:100%; font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
@@ -34,8 +35,8 @@ body { padding-bottom: 80px; }
 .mode-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
 .legend { display:flex; gap:10px; margin-bottom:10px; font-size:0.7rem; color:var(--text-dim); justify-content:center; flex-wrap:wrap; }
 .legend span { display:flex; align-items:center; gap:4px; }
-.legend .dot { width:8px; height:8px; border-radius:2px; }
-.dot-s { background:#fff; } .dot-l { background:var(--danger); } .dot-f { background:var(--primary); }
+.legend .dot { width:8px; height:8px; border-radius:0; }
+.dot-s { background:#fff; } .dot-l { background:var(--key-blue); } .dot-f { background:var(--key-blue); }
 .info-card { background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.25); border-radius:0; padding:12px; margin-bottom:12px; font-size:0.85rem; line-height:1.5; }
 .info-card strong { color:var(--primary); }
 .keypad { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; max-width:420px; margin:0 auto; }
@@ -52,8 +53,8 @@ body { padding-bottom: 80px; }
   font-size:0.55rem; padding:1px 3px; border-radius:0; line-height:1.15; 
   text-align:center; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; 
 }
-.sub-l { background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.25); }
-.sub-f { background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.25); }
+.sub-l { background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
+.sub-f { background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
 .sub-s { background:rgba(255,255,255,0.08); color:#e8edf5; border:1px solid rgba(255,255,255,0.15); }
 
 .key-modal { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); align-items:flex-end; justify-content:center; }
@@ -118,7 +119,7 @@ body { padding-bottom: 80px; }
   .compact-grid { grid-template-columns:1fr; }
 }
 ::-webkit-scrollbar { width:5px; height:5px; }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:0; }
 </style>
 </head>
 <body>
@@ -423,8 +424,8 @@ function showKeyModal(k){
   document.getElementById('km-title').textContent=`Кнопка ${k} [${currentMode}]`;
   let b='';
   if(act.s) b+=`<div class="detail-row"><div class="detail-label">Простое</div><div class="detail-value">${act.s}</div></div>`;
-  if(act.l) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--danger)">Долгое (L)</div><div class="detail-value">${act.l}</div></div>`;
-  if(act.f) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--primary)">После F</div><div class="detail-value">${act.f}</div></div>`;
+  if(act.l) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--key-blue)">Долгое (L)</div><div class="detail-value">${act.l}</div></div>`;
+  if(act.f) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--key-blue)">После F</div><div class="detail-value">${act.f}</div></div>`;
   if(act.full) b+=`<div class="full-desc">${act.full}</div>`;
   document.getElementById('km-body').innerHTML=b;
   modal.classList.add('show');
