@@ -25,7 +25,8 @@ body { padding-bottom: 80px; }
 .nav-item svg { width:20px; height:20px; }
 .tab-content { display:none; padding:14px; max-width:900px; margin:0 auto; }
 .tab-content.active { display:block; animation: fadeIn 0.25s ease; }
-.uppercase-text {text-transform: uppercase;}
+.sup {vertical-align: super; font-size: small; }
+.sup-xs {vertical-align: super; font-size: 8px; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .search-box { position:sticky; top:46px; z-index:90; margin-bottom:12px; }
 .search-box input { width:100%; background:var(--bg-card); border:1px solid var(--border); color:var(--text); padding:10px 12px 10px 36px; border-radius:var(--radius); font-size:0.9rem; outline:none; font-family:inherit; }
@@ -173,7 +174,7 @@ body { padding-bottom: 80px; }
   </div>
 
   <div id="tab-monitoring" class="tab-content">
-    <h2 class="section-title" style="margin-bottom:10px;">Детальный мониторинг (MENU → M<span style="text-transform: uppercase;">A</span>)</h2>
+    <h2 class="section-title" style="margin-bottom:10px;">Детальный мониторинг (MENU → M<span class="sup">A</span>)</h2>
     <div class="info-card" style="margin-bottom:16px;"><b>Навигация:</b> Перемещение по меню — кнопки <b>2</b> и <b>8</b>. Смена значений — кнопки <b>&lt;</b> и <b>&gt;</b>.</div>
     <div class="compact-grid" id="monitoring-list"></div>
   </div>
@@ -234,7 +235,7 @@ const contextInfo = {
 
 const keyData = {
   MR:{
-    M:{s:'Меню (MA)', full:'MA – Меню.\nВызов основного меню настроек.'},
+    M:{s:'Меню', full:'M<span class="sup-xs">A</span> – Меню.\nВызов основного меню настроек.'},
     '<':{s:'Навигация ←', full:'<= – Кнопки навигации.\nИспользуется для перемещения по пунктам меню или изменения значений.'},
     '>':{s:'Навигация →', full:'=> – Кнопки навигации.\nИспользуется для перемещения по пунктам меню или изменения значений.'},
     Exit:{s:'Выход', full:'EXIT – Выход.\nВыход из режима сканирования, меню и подменю.'},
@@ -252,7 +253,7 @@ const keyData = {
     '#F':{s:'Функциональная F', full:'#F – Функциональная «F».\nАктивирует режим нажатия после F для цифровых клавиш.'}
   },
   VFO:{
-    M:{s:'Меню (MA)', full:'MA – Меню.'},
+    M:{s:'Меню', full:'MA – Меню.'},
     '<':{s:'Навигация ←', full:'<= – Кнопки навигации.'},
     '>':{s:'Навигация →', full:'=> – Кнопки навигации.'},
     Exit:{s:'Выход', full:'EXIT – Выход.'},
@@ -386,21 +387,21 @@ const specParams = [
 ];
 
 const monitoringParams = [
-  {id:"LNAS",title:"LNAS",desc:"Усиление LNA (Low Noise Amplifier) – ступени усиления сигнала перед микшером."},
-  {id:"LNA",title:"LNA",desc:"Усиление первого каскада LNA – выше = сильнее сигнал, но больше помех."},
-  {id:"PGA",title:"PGA",desc:"Усиление Programmable Gain Amplifier (после LNA) – баланс между чувствительностью и искажениями."},
-  {id:"MIX",title:"MIX",desc:"Усиление миксера (смешивание частот) – выше = лучше динамический диапазон, но больше шумов."},
-  {id:"XTAL_F_MODE_SELECT",title:"XTAL F MODE SELECT",desc:"Режим работы кварцевого фильтра (XTAL). Фильтрация (снижает шум, но может искажать)."},
-  {id:"OFF_AF_RX_DE-EMP",title:"OFF AF RX DE-EMP",desc:"Отключение демфазиса (коррекция предискажений) при приёме."},
-  {id:"GAIN_AFTER_FM_DEMOD",title:"GAIN AFTER FM DEMOD",desc:"Регулирует громкость приёма."},
-  {id:"RF_TX_DEVIATION",title:"RF TX DEVIATION",desc:"Отклонение частоты при передаче (FM deviation) – влияет на ширину полосы передачи (выше = громче)."},
-  {id:"COMPRESS_AF_TX_RATIO",title:"COMPRESS AF TX RATIO",desc:"Коэффициент компрессии аудио при передаче – сжимает динамический диапазон."},
-  {id:"COMPRESS_AF_TX_0_DB",title:"COMPRESS AF TX 0 DB",desc:"Уровень компрессии 0 dB при передаче – точка начала компрессии."},
-  {id:"COMPRESS_AF_TX_NOISE",title:"COMPRESS AF TX NOISE",desc:"Подавление шума в тихих местах."},
-  {id:"MIC_AGC_DISABLE",title:"MIC AGC DISABLE",desc:"Отключение автоматической регулировки усиления микрофона (AGC)."},
-  {id:"AFC_RANGE_SELECT",title:"AFC RANGE SELECT",desc:"Диапазон работы AFC (автоподстройки частоты)."},
-  {id:"AFC_DISABLE",title:"AFC DISABLE",desc:"Отключение AFC."},
-  {id:"AFC_SPEED",title:"AFC SPEED",desc:"Скорость работы AFC."}
+  {id:"LNAS",title:"Усиление",desc:"Усиление LNA (Low Noise Amplifier) – ступени усиления сигнала перед микшером."},
+  {id:"LNA",title:"Усиление",desc:"Усиление первого каскада LNA – выше = сильнее сигнал, но больше помех."},
+  {id:"PGA",title:"Усиление",desc:"Усиление Programmable Gain Amplifier (после LNA) – баланс между чувствительностью и искажениями."},
+  {id:"MIX",title:"Усиление",desc:"Усиление миксера (смешивание частот) – выше = лучше динамический диапазон, но больше шумов."},
+  {id:"XTAL_F_MODE_SELECT",title:"Режим работы кварцевого фильтра",desc:"Режим работы кварцевого фильтра (XTAL). Фильтрация (снижает шум, но может искажать)."},
+  {id:"OFF_AF_RX_DE-EMP",title:"Отключение демфазиса",desc:"Отключение демфазиса (коррекция предискажений) при приёме."},
+  {id:"GAIN_AFTER_FM_DEMOD",title:"Громкость приёма",desc:"Регулирует громкость приёма."},
+  {id:"RF_TX_DEVIATION",title:"Отклонение частоты при передаче",desc:"Отклонение частоты при передаче (FM deviation) – влияет на ширину полосы передачи (выше = громче)."},
+  {id:"COMPRESS_AF_TX_RATIO",title:"Коэффициент компрессии аудио при передаче",desc:"Коэффициент компрессии аудио при передаче – сжимает динамический диапазон."},
+  {id:"COMPRESS_AF_TX_0_DB",title:"Уровень компрессии 0 dB при передаче",desc:"Уровень компрессии 0 dB при передаче – точка начала компрессии."},
+  {id:"COMPRESS_AF_TX_NOISE",title:"Подавление шума",desc:"Подавление шума в тихих местах."},
+  {id:"MIC_AGC_DISABLE",title:"Отключение регулировки микрофона AGC",desc:"Отключение автоматической регулировки усиления микрофона (AGC)."},
+  {id:"AFC_RANGE_SELECT",title:"Диапазон работы AFC",desc:"Диапазон работы AFC (автоподстройки частоты)."},
+  {id:"AFC_DISABLE",title:"Отключение AFC",desc:"Отключение AFC."},
+  {id:"AFC_SPEED",title:"Скорость работы AFC",desc:"Скорость работы AFC."}
 ];
 
 const lpdData = Array.from({length:69}, (_,i)=>({ch:i+1, freq:(433.075+i*0.025).toFixed(3), tags:[1,2,6,10,12,17,23].includes(i+1)?['8-канальный']:[]}));
