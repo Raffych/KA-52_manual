@@ -88,17 +88,6 @@ body { padding-bottom: 80px; }
 .filter-btn { padding:5px 10px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:0; font-size:0.75rem; cursor:pointer; font-family:inherit; }
 .filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
 
-.freq-table-wrap { overflow-x:auto; margin-top:8px; border:1px solid var(--border); border-radius:0; }
-.freq-table { width:100%; border-collapse:collapse; font-size:0.75rem; }
-.freq-table th { background:var(--bg-card); color:var(--text-dim); padding:8px; text-align:left; font-weight:600; position:sticky; top:0; }
-.freq-table td { padding:8px; border-bottom:1px solid var(--border); }
-.freq-table tr:hover td { background:var(--bg-hover); }
-.tag { display:inline-block; font-size:0.6rem; padding:2px 5px; border-radius:0; margin-right:4px; font-weight:500; }
-.tag-e { background:rgba(134,6,6,0.15); color:var(--danger); }
-.tag-c { background:rgba(16,185,129,0.15); color:var(--accent); }
-.tag-f { background:rgba(134,6,6,0.15); color:var(--primary); }
-.tag-w { background:rgba(245,158,11,0.15); color:var(--warn); }
-.copy-btn { background:none; border:none; color:var(--primary); cursor:pointer; font-size:0.75rem; padding:0 4px; }
 
 .checklist { list-style:none; }
 .checklist li { display:flex; align-items:center; gap:10px; padding:12px 10px; border-bottom:1px solid var(--border); background:var(--bg-card); margin-bottom:4px; border-radius:0; font-size:0.85rem; }
@@ -179,20 +168,6 @@ body { padding-bottom: 80px; }
     <div class="compact-grid" id="monitoring-list"></div>
   </div>
 
-  <div id="tab-freq" class="tab-content">
-    <div class="search-box"><input type="text" id="freq-search" placeholder="Поиск частоты..." oninput="filterFreqs()"></div>
-    <div class="filter-bar">
-      <button class="filter-btn active" data-band="LPD">LPD</button>
-      <button class="filter-btn" data-band="PMR">PMR</button>
-      <button class="filter-btn" data-band="CB">CB</button>
-      <button class="filter-btn" data-band="VHF">VHF</button>
-      <button class="filter-btn" data-band="OTHER">Другое</button>
-    </div>
-    <div class="freq-table-wrap">
-      <table class="freq-table"><thead id="freq-head"></thead><tbody id="freq-body"></tbody></table>
-    </div>
-  </div>
-
   <div id="tab-guides" class="tab-content">
     <div class="filter-bar">
       <button class="guide-tab active" onclick="showGuide('flash')">🔌 Прошивка</button>
@@ -217,7 +192,6 @@ body { padding-bottom: 80px; }
   <button class="nav-item" data-tab="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>Меню</button>
   <button class="nav-item" data-tab="spectrum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M4 20V10M8 20V4M12 20V8M16 20V12M20 20V6"/></svg>Спектр</button>
   <button class="nav-item" data-tab="monitoring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Мониторинг</button>
-  <button class="nav-item" data-tab="freq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M6 8l6 4-6 4V8zM18 8l-6 4 6 4V8z"/></svg>Частоты</button>
   <button class="nav-item" data-tab="guides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Гайды</button>
 </nav>
 
@@ -404,13 +378,7 @@ const monitoringParams = [
   {id:"AFC_SPEED",title:"Скорость работы AFC",desc:"Скорость работы AFC."}
 ];
 
-const lpdData = Array.from({length:69}, (_,i)=>({ch:i+1, freq:(433.075+i*0.025).toFixed(3), tags:[1,2,6,10,12,17,23].includes(i+1)?['8-канальный']:[]}));
-const pmrData = [{ch:1,freq:"446.00625"},{ch:2,freq:"446.01875"},{ch:3,freq:"446.03125"},{ch:4,freq:"446.04375"},{ch:5,freq:"446.05625"},{ch:6,freq:"446.06875"},{ch:7,freq:"446.08125"},{ch:8,freq:"446.09375"}];
-const cbData = [{ch:1,f:"26.965",t:""},{ch:2,f:"26.975",t:""},{ch:3,f:"26.985",t:""},{ch:4,f:"27.005",t:""},{ch:5,f:"27.015",t:""},{ch:6,f:"27.025",t:""},{ch:7,f:"27.035",t:""},{ch:8,f:"27.055",t:""},{ch:9,f:"27.065",t:"Экстренный",tag:"e"},{ch:10,f:"27.075",t:""},{ch:11,f:"27.085",t:""},{ch:12,f:"27.105",t:""},{ch:13,f:"27.115",t:""},{ch:14,f:"27.125",t:"Туристы",tag:"c"},{ch:15,f:"27.135",t:"Дальнобойщики",tag:"c"},{ch:16,f:"27.155",t:""},{ch:17,f:"27.165",t:""},{ch:18,f:"27.175",t:""},{ch:19,f:"27.185",t:"Дальнобойный СНГ",tag:"c"},{ch:20,f:"27.205",t:"Владивосток Авто"},{ch:21,f:"27.215",t:""},{ch:22,f:"27.225",t:""},{ch:23,f:"27.255",t:""},{ch:24,f:"27.235",t:""},{ch:25,f:"27.245",t:""},{ch:26,f:"27.265",t:""},{ch:27,f:"27.275",t:""},{ch:28,f:"27.285",t:""},{ch:29,f:"27.295",t:""},{ch:30,f:"27.305",t:"Цифровые (DRM)",tag:"w"},{ch:31,f:"27.315",t:""},{ch:32,f:"27.325",t:""},{ch:33,f:"27.335",t:""},{ch:34,f:"27.345",t:""},{ch:35,f:"27.355",t:""},{ch:36,f:"27.365",t:""},{ch:37,f:"27.375",t:""},{ch:38,f:"27.385",t:""},{ch:39,f:"27.395",t:""},{ch:40,f:"27.405",t:""}];
-const vhfData = [{f:"144.000",t:"Граница",tag:"w"},{f:"144.012-144.987",t:"Любительский",tag:"w"},{f:"145.212-145.487",t:"Любительский",tag:"w"},{f:"145.500",t:"Вызывная",tag:"c"},{f:"145.512-145.987",t:"Любительский",tag:"w"},{f:"146.000",t:"Граница",tag:"w"}];
-const otherFreqs = [{r:"118-137 МГц",t:"Авиация",tag:"w"},{r:"148-149, 171-173",t:"МВД РФ",tag:"w"},{r:"406-407 МГц",t:"КОСПАС-САРСАТ",tag:"e"},{r:"328.6-335.4",t:"Радионавигация",tag:"w"},{r:"393.1, 380, 254, 173-174",t:"Минобороны",tag:"w"},{r:"450-470 МГц",t:"Служебные",tag:"w"},{r:"495-505 МГц",t:"Морзе/Бедствие",tag:"e"},{r:"151-156 МГц",t:"ЖД связь",tag:"w"},{r:"149-171 МГц",t:"Правительственная",tag:"w"},{r:"137-144 МГц",t:"Космос/Воздух",tag:"w"}];
-
-let currentMode = 'MR', currentBand = 'LPD', resetInterval = null;
+let currentMode = 'MR', resetInterval = null;
 const guides = {
   flash:[{t:"Вкл. рацию в режиме прошивки (PTT + включение)"},{t:"Подготовьте кабель USB-C с передачей данных"},{t:"Запустите UV TOOL на ПК"},{t:"Подключите рацию кабелем"},{t:"В UV TOOL определите порт, нажмите «Обновить»"},{t:"Выберите прошивку КА-52, нажмите «Прошить»"},{t:"Дождитесь завершения. Не отключайте кабель!"}],
   reset:[{t:"Выключите рацию"},{t:"Нажмите и удерживайте PTT + Fn2"},{t:"Не отпуская, включите рацию"},{t:"На экране без подсветки появится предупреждение"},{t:"Удерживайте 4 секунды до сброса"},{t:"Рация перезагрузится"}],
@@ -418,7 +386,7 @@ const guides = {
 };
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderMonitoring(); renderFreq(); renderGuides(); updateContextInfo();
+  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderMonitoring(); renderGuides(); updateContextInfo();
 });
 
 function setupNavigation(){document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+b.dataset.tab).classList.add('active');});}
@@ -426,7 +394,6 @@ function setupModeSwitcher(){document.querySelectorAll('.mode-btn').forEach(b=>b
 function updateContextInfo(){ document.getElementById('mode-context-info').innerHTML = contextInfo[currentMode] || ''; }
 function setupFilters(){
   document.querySelectorAll('#menu-filters .filter-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#menu-filters .filter-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');filterMenu();});
-  document.querySelectorAll('#tab-freq .filter-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tab-freq .filter-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');currentBand=b.dataset.band;renderFreq();});
 }
 
 function renderKeypad(){
@@ -491,25 +458,6 @@ function renderMonitoring(){
   });
   list.innerHTML=html;
 }
-
-function renderFreq(){
-  const s=document.getElementById('freq-search').value.toLowerCase();
-  const th=document.getElementById('freq-head'), tb=document.getElementById('freq-body');
-  let rows=[], cols=[];
-  if(currentBand==='LPD'){cols=['Канал','Частота (МГц)'];rows=lpdData.map(d=>({c:d.ch,f:d.freq,tags:d.tags}));}
-  else if(currentBand==='PMR'){cols=['Канал','Частота (МГц)'];rows=pmrData.map(d=>({c:d.ch,f:d.freq,tags:['Без лицензии']}));}
-  else if(currentBand==='CB'){cols=['Канал','Частота','Отметка'];rows=cbData.map(d=>({c:d.ch,f:d.f,note:d.t,tag:d.tag}));}
-  else if(currentBand==='VHF'){cols=['Частота (МГц)','Отметка'];rows=vhfData.map(d=>({c:'—',f:d.f,note:d.t,tag:d.tag}));}
-  else{cols=['Диапазон','Описание'];rows=otherFreqs.map(d=>({c:'—',f:d.r,note:d.t,tag:d.tag}));}
-  if(s) rows=rows.filter(d=>d.c.toString().includes(s)||d.f.toLowerCase().includes(s)||(d.note||'').toLowerCase().includes(s));
-  th.innerHTML=cols.map(h=>`<th>${h}</th>`).join('');
-  tb.innerHTML=rows.map(d=>{
-    const tags=d.tag==='e'?'<span class="tag tag-e">Экстренный</span>':d.tag==='w'?'<span class="tag tag-w">Лицензия</span>':d.tag==='c'?'<span class="tag tag-c">Свободный</span>':(d.tags||[]).map(t=>`<span class="tag tag-c">${t}</span>`).join('');
-    return `<tr>${currentBand!=='VHF'&&currentBand!=='OTHER'?`<td>${d.c}</td>`:''}<td><strong>${d.f}</strong> <button class="copy-btn" onclick="copyClip('${d.f}')">📋</button></td><td>${tags}${d.note?`<div style="font-size:0.65rem;color:var(--text-dim);margin-top:2px;">${d.note}</div>`:''}</td></tr>`;
-  }).join('');
-}
-function filterFreqs(){renderFreq();}
-function copyClip(t){navigator.clipboard.writeText(t).then(()=>showToast('Скопировано: '+t));}
 
 function showGuide(type){document.querySelectorAll('.guide-content').forEach(g=>g.style.display='none');document.querySelectorAll('.guide-tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');document.getElementById('guide-'+type).style.display='block';}
 function renderGuides(){['flash','reset','channels'].forEach(k=>{document.getElementById('checklist-'+k).innerHTML=guides[k].map((g,i)=>`<li onclick="toggleCheck(this)"><span class="step-num">${i+1}</span><input type="checkbox" onchange="checkStep(this)"><span>${g.t}</span></li>`).join('');});}
