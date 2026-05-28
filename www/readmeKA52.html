@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>КА-52 Alligator Справочник</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.18/index.min.css">
+<style>
+:root {
+  --bg: #0a0e14; --bg-card: #111820; --bg-hover: #1c2533; --border: #2a3547;
+  --text: #e8edf5; --text-dim: #8892a4; --primary: #3b82f6; --primary-dim: #2563eb;
+  --accent: #10b981; --warn: #f59e0b; --danger: #ef4444; --radius: 10px;
+  --shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+body { padding-bottom: 80px; }
+.header { position:sticky; top:0; z-index:100; background:rgba(10,14,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; }
+.header h1 { font-size:1.05rem; font-weight:700; letter-spacing:-0.3px; }
+.header .badge { background:var(--primary); color:#fff; font-size:0.65rem; padding:2px 8px; border-radius:99px; font-weight:600; }
+.nav { position:fixed; bottom:0; left:0; right:0; z-index:100; background:rgba(10,14,20,0.98); backdrop-filter:blur(12px); border-top:1px solid var(--border); display:flex; padding:6px 0 env(safe-area-inset-bottom,6px); }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 4px; cursor:pointer; transition:all 0.2s; color:var(--text-dim); border:none; background:none; font-size:0.65rem; font-family:inherit; }
+.nav-item.active { color:var(--primary); }
+.nav-item svg { width:20px; height:20px; }
+.tab-content { display:none; padding:14px; max-width:900px; margin:0 auto; }
+.tab-content.active { display:block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.search-box { position:sticky; top:46px; z-index:90; margin-bottom:12px; }
+.search-box input { width:100%; background:var(--bg-card); border:1px solid var(--border); color:var(--text); padding:10px 12px 10px 36px; border-radius:var(--radius); font-size:0.9rem; outline:none; font-family:inherit; }
+.search-box::before { content: "🔍"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.8rem; pointer-events:none; }
+.search-box input:focus { border-color:var(--primary); box-shadow:0 0 0 2px rgba(59,130,246,0.2); }
+.mode-switcher { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.mode-btn { padding:7px 12px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:var(--radius); cursor:pointer; font-size:0.8rem; font-family:inherit; font-weight:500; transition:all 0.2s; }
+.mode-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+.legend { display:flex; gap:10px; margin-bottom:10px; font-size:0.7rem; color:var(--text-dim); justify-content:center; flex-wrap:wrap; }
+.legend span { display:flex; align-items:center; gap:4px; }
+.legend .dot { width:8px; height:8px; border-radius:2px; }
+.dot-s { background:#fff; } .dot-l { background:var(--danger); } .dot-f { background:var(--primary); }
+.info-card { background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.25); border-radius:var(--radius); padding:12px; margin-bottom:12px; font-size:0.85rem; line-height:1.5; }
+.info-card strong { color:var(--primary); }
+.keypad { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; max-width:420px; margin:0 auto; }
+.key { 
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); 
+  display:flex; flex-direction:column; justify-content:center; align-items:center; 
+  height:82px; width:100%; cursor:pointer; transition:all 0.15s; user-select:none; 
+  padding:4px; overflow:hidden; position:relative;
+}
+.key:active { transform:scale(0.97); background:var(--bg-hover); border-color:var(--primary); }
+.key .num { font-size:1.35rem; font-weight:700; line-height:1; margin-bottom:3px; flex-shrink:0; }
+.key .subs { display:flex; flex-direction:column; align-items:center; gap:2px; width:100%; max-height:38px; overflow:hidden; flex-shrink:1; }
+.key .sub { 
+  font-size:0.55rem; padding:1px 3px; border-radius:4px; line-height:1.15; 
+  text-align:center; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; 
+}
+.sub-l { background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.25); }
+.sub-f { background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
+.sub-s { background:rgba(255,255,255,0.08); color:#e8edf5; border:1px solid rgba(255,255,255,0.15); }
+
+.key-modal { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); align-items:flex-end; justify-content:center; }
+.key-modal.show { display:flex; animation: slideUp 0.2s ease; }
+@keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+.key-modal-content { background:var(--bg-card); border:1px solid var(--border); border-radius:16px 16px 0 0; padding:18px; width:100%; max-width:500px; max-height:75vh; overflow-y:auto; }
+.key-modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.key-modal-close { background:none; border:none; color:var(--text-dim); font-size:1.4rem; cursor:pointer; padding:4px; }
+.detail-row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+.detail-row:last-child { border:none; }
+.detail-label { font-size:0.7rem; color:var(--text-dim); min-width:80px; font-weight:600; text-transform:uppercase; }
+.detail-value { font-size:0.85rem; }
+.full-desc { font-size: 0.85rem; line-height: 1.6; color: var(--text); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); white-space: pre-line; }
+
+.compact-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:8px; }
+.compact-card { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:10px 12px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; }
+.compact-card:hover { background:var(--bg-hover); border-color:var(--primary); }
+.compact-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.c-id { background:var(--primary); color:#fff; padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:700; flex-shrink:0; }
+.c-code { font-family:monospace; font-size:0.95rem; font-weight:700; color:var(--text); flex-shrink:0; }
+.c-title { font-weight:600; font-size:0.8rem; color:var(--text-dim); flex:1; }
+.c-desc { font-size:0.75rem; color:var(--text-dim); margin-top:4px; display:none; line-height:1.4; border-top:1px solid var(--border); padding-top:4px; }
+.compact-card.open .c-desc { display:block; }
+.compact-card.open { border-color:var(--accent); background:rgba(16,185,129,0.05); }
+.c-warn { color:var(--warn); font-size:0.7rem; margin-top:2px; display:none; }
+.compact-card.open .c-warn { display:block; }
+
+.filter-bar { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+.filter-btn { padding:5px 10px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:6px; font-size:0.75rem; cursor:pointer; font-family:inherit; }
+.filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+.freq-table-wrap { overflow-x:auto; margin-top:8px; border:1px solid var(--border); border-radius:8px; }
+.freq-table { width:100%; border-collapse:collapse; font-size:0.75rem; }
+.freq-table th { background:var(--bg-card); color:var(--text-dim); padding:8px; text-align:left; font-weight:600; position:sticky; top:0; }
+.freq-table td { padding:8px; border-bottom:1px solid var(--border); }
+.freq-table tr:hover td { background:var(--bg-hover); }
+.tag { display:inline-block; font-size:0.6rem; padding:2px 5px; border-radius:4px; margin-right:4px; font-weight:500; }
+.tag-e { background:rgba(239,68,68,0.15); color:var(--danger); }
+.tag-c { background:rgba(16,185,129,0.15); color:var(--accent); }
+.tag-f { background:rgba(59,130,246,0.15); color:var(--primary); }
+.tag-w { background:rgba(245,158,11,0.15); color:var(--warn); }
+.copy-btn { background:none; border:none; color:var(--primary); cursor:pointer; font-size:0.75rem; padding:0 4px; }
+
+.checklist { list-style:none; }
+.checklist li { display:flex; align-items:center; gap:10px; padding:12px 10px; border-bottom:1px solid var(--border); background:var(--bg-card); margin-bottom:4px; border-radius:8px; font-size:0.85rem; }
+.checklist input[type="checkbox"] { width:18px; height:18px; accent-color:var(--primary); cursor:pointer; }
+.checklist li.done { opacity:0.5; text-decoration:line-through; }
+.step-num { background:var(--primary); color:#fff; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:0.7rem; font-weight:600; flex-shrink:0; }
+.timer-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; text-align:center; margin-top:12px; }
+.timer-display { font-size:2rem; font-weight:700; font-variant-numeric:tabular-nums; margin:10px 0; }
+.btn { padding:10px 16px; border:none; border-radius:var(--radius); font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-warn { background:var(--warn); color:#111; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+.toast { position:fixed; bottom:75px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--accent); color:#fff; padding:8px 18px; border-radius:99px; font-size:0.8rem; font-weight:500; opacity:0; transition:all 0.3s; z-index:300; pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+@media (max-width:480px) {
+  .keypad { gap:5px; max-width:100%; }
+  .key { height:76px; }
+  .key .num { font-size:1.2rem; }
+  .key .sub { font-size:0.5rem; }
+  .compact-grid { grid-template-columns:1fr; }
+}
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>КА-52 Alligator</h1>
+    <div style="font-size:0.6rem;color:var(--text-dim);">Quansheng UV-K1 / K5V3</div>
+  </div>
+  <span class="badge">OFFLINE</span>
+</div>
+
+<main>
+  <div id="tab-keyboard" class="tab-content active">
+    <div class="mode-switcher">
+      <button class="mode-btn active" data-mode="MR">MR</button>
+      <button class="mode-btn" data-mode="VFO">VFO</button>
+      <button class="mode-btn" data-mode="SPECTRUM">Спектр</button>
+      <button class="mode-btn" data-mode="FM">FM Радио</button>
+    </div>
+    <div id="mode-context-info" class="info-card"></div>
+    <div class="legend"><span><i class="dot dot-s"></i> Простое</span><span><i class="dot dot-l"></i> Долгое (L)</span><span><i class="dot dot-f"></i> После F</span></div>
+    <div class="keypad" id="keypad"></div>
+    <div class="key-modal" id="key-modal">
+      <div class="key-modal-content">
+        <div class="key-modal-header"><h3 id="km-title">Кнопка</h3><button class="key-modal-close" onclick="closeKeyModal()">✕</button></div>
+        <div id="km-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-menu" class="tab-content">
+    <div class="search-box"><input type="text" id="menu-search" placeholder="Поиск по названию, коду или ID..." oninput="filterMenu()"></div>
+    <div class="filter-bar" id="menu-filters">
+      <button class="filter-btn active" data-cat="all">Все</button>
+      <button class="filter-btn" data-cat="Связь">Связь</button>
+      <button class="filter-btn" data-cat="Аудио">Аудио</button>
+      <button class="filter-btn" data-cat="Дисплей">Дисплей</button>
+      <button class="filter-btn" data-cat="Безопасность">Безопасность</button>
+      <button class="filter-btn" data-cat="Калибровка">Калибровка</button>
+    </div>
+    <div class="compact-grid" id="menu-list"></div>
+  </div>
+
+  <div id="tab-spectrum" class="tab-content">
+    <h2 class="section-title" style="margin-top:0">⚙️ Параметры спектроанализатора</h2>
+    <div class="compact-grid" id="spectrum-list"></div>
+  </div>
+
+  <div id="tab-freq" class="tab-content">
+    <div class="search-box"><input type="text" id="freq-search" placeholder="Поиск частоты..." oninput="filterFreqs()"></div>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-band="LPD">LPD</button>
+      <button class="filter-btn" data-band="PMR">PMR</button>
+      <button class="filter-btn" data-band="CB">CB</button>
+      <button class="filter-btn" data-band="VHF">VHF</button>
+      <button class="filter-btn" data-band="OTHER">Другое</button>
+    </div>
+    <div class="freq-table-wrap">
+      <table class="freq-table"><thead id="freq-head"></thead><tbody id="freq-body"></tbody></table>
+    </div>
+  </div>
+
+  <div id="tab-guides" class="tab-content">
+    <div class="filter-bar">
+      <button class="guide-tab active" onclick="showGuide('flash')">🔌 Прошивка</button>
+      <button class="guide-tab" onclick="showGuide('reset')">🔄 Сброс</button>
+      <button class="guide-tab" onclick="showGuide('channels')">📻 Каналы</button>
+    </div>
+    <div id="guide-flash" class="guide-content"><ul class="checklist" id="checklist-flash"></ul></div>
+    <div id="guide-reset" class="guide-content" style="display:none;">
+      <ul class="checklist" id="checklist-reset"></ul>
+      <div class="timer-box" id="reset-timer-box">
+        <div>Удерживайте PTT + Fn2</div>
+        <div class="timer-display" id="timer-display">4.0 сек</div>
+        <button class="btn btn-warn" onclick="startResetTimer()">⏱️ Таймер</button>
+      </div>
+    </div>
+    <div id="guide-channels" class="guide-content" style="display:none;"><ul class="checklist" id="checklist-channels"></ul></div>
+  </div>
+</main>
+
+<nav class="nav">
+  <button class="nav-item active" data-tab="keyboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="7" cy="10" r="1.5"/><circle cx="12" cy="10" r="1.5"/><circle cx="17" cy="10" r="1.5"/><circle cx="7" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/><circle cx="17" cy="14" r="1.5"/></svg>Клавиатура</button>
+  <button class="nav-item" data-tab="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>Меню</button>
+  <button class="nav-item" data-tab="spectrum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M4 20V10M8 20V4M12 20V8M16 20V12M20 20V6"/></svg>Спектр</button>
+  <button class="nav-item" data-tab="freq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M6 8l6 4-6 4V8zM18 8l-6 4 6 4V8z"/></svg>Частоты</button>
+  <button class="nav-item" data-tab="guides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Гайды</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const keyLayout = [['M','<','>','Exit'],['1','2','3','*'],['4','5','6','0'],['7','8','9','#F']];
+
+const contextInfo = {
+  MR: `<b>Простое сканирование:</b> В канальном режиме кнопка <b>*</b> меняет списки сканирования. Также можно менять списки простым вводом цифр с клавиатуры. Выход из сканирования: <b>EXIT</b>.`,
+  VFO: `<b>Простое сканирование:</b> В режиме VFO доступно сканирование по частотному диапазону с установленным шагом. Для сканирования нажмите кнопку <b>*</b>. Выход из сканирования: <b>EXIT</b>.`,
+  SPECTRUM: `<b>Типы спектра:</b> Разные типы спектра вызываются быстрыми кнопками <b>F7</b>, <b>F8</b>, <b>F9</b>. В любом из режимов спектра вы можете сменить их нажав кнопку <b>6</b>.`,
+  FM: `<b>FM Радио:</b> Кнопками <b>&lt;</b> и <b>&gt;</b> ищите ближайшую частоту вещания. Кнопки <b>1-6</b>: Короткое — вызов сохранённой, Долгое — сохранить под номером. Кнопка <b>*</b> (короткое) меняет Auto/Step, (долгое) — вкл/выкл фон.`
+};
+
+const keyData = {
+  MR:{
+    M:{s:'Меню (MA)', full:'MA – Меню.\nВызов основного меню настроек.'},
+    '<':{s:'Навигация ←', full:'<= – Кнопки навигации.\nИспользуется для перемещения по пунктам меню или изменения значений.'},
+    '>':{s:'Навигация →', full:'=> – Кнопки навигации.\nИспользуется для перемещения по пунктам меню или изменения значений.'},
+    Exit:{s:'Выход', full:'EXIT – Выход.\nВыход из режима сканирования, меню и подменю.'},
+    '1':{s:'Набор', l:'Перенос частоты в VFO', f:'1CALL', full:'1 – Простое нажатие (набор).\nL1 – (MR) Перенос частоты канал в режим VFO.\nF1 – 1CALL – Быстрый вызов (настраивается в меню 17).'},
+    '2':{l:'Смена VFO', f:'Удалить канал', full:'L2 – (MR и VFO) Смена VFO (в режиме MAIN ONLY индикация иконкой).\nF2 – (MR) Удалить канал.'},
+    '3':{l:'Смена MR/VFO', full:'L3 – Смена режимов MR/VFO на выбранном канале.'},
+    '4':{l:'Ширина полосы', full:'L4 – (MR и VFO) Смена ширины полосы (WIDE/NARROW).'},
+    '5':{l:'Список сканир.', full:'L5 – (MR) Смена номера списка для канала.\nТакже можно менять списки простым вводом цифр с клавиатуры.'},
+    '6':{l:'Мощность', f:'Запрет TX (X)', full:'L6 – (MR и VFO) Смена мощности (L/M/H/U – Настраиваемое значение "U").\nF6 – Мощность – "X" – Запрет передачи на канале.\n* – Для сохранения мощности для канала включить и выключить режим "X". Режим "U" настраивается в меню.'},
+    '7':{l:'Фонарик RX', full:'L7 – (MR и VFO) Вкл/Выкл индикацию фонариком при входящем.'},
+    '8':{l:'Будет назначена', full:'L8 – Будет назначена в обновлениях.'},
+    '9':{l:'Пост. подсветка', full:'L9 – (MR и VFO) Вкл/Выкл постоянную подсветку.'},
+    '0':{l:'Смена модуляции', f:'FM Радио', full:'L0 – Смена модуляции AM/FM/USB.\nF0 – Радиовещание (FM радио).'},
+    '*':{s:'Сканер / Смена списка', l:'Захват частоты', f:'Захват субтона', full:'* – Режим сканера. В MR меняет списки сканирования. В VFO запускает сканирование по частоте.\nL* – Режим сканера (Захват частоты).\nF* – Режим сканера (Захват субтона).'},
+    '#F':{s:'Функциональная F', full:'#F – Функциональная «F».\nАктивирует режим нажатия после F для цифровых клавиш.'}
+  },
+  VFO:{
+    M:{s:'Меню (MA)', full:'MA – Меню.'},
+    '<':{s:'Навигация ←', full:'<= – Кнопки навигации.'},
+    '>':{s:'Навигация →', full:'=> – Кнопки навигации.'},
+    Exit:{s:'Выход', full:'EXIT – Выход.'},
+    '1':{s:'Набор', l:'Смена диапазона', f:'1CALL', full:'L1 – (VFO) Смена диапазона.\nF1 – 1CALL – Быстрый вызов.'},
+    '2':{l:'Смена VFO', f:'Сохранить частоту', full:'L2 – (VFO) Смена VFO.\nF2 – (VFO) Сохранить частоту.'},
+    '3':{l:'Смена MR/VFO', full:'L3 – Смена режимов MR/VFO.'},
+    '4':{l:'Ширина полосы', full:'L4 – (VFO) Смена ширины полосы.'},
+    '5':{l:'Смена шага', full:'L5 – (VFO) Смена шага частоты.'},
+    '6':{l:'Мощность', f:'Запрет TX (X)', full:'L6 – Смена мощности (L/M/H/U).\nF6 – Запрет передачи (X).'},
+    '7':{l:'Фонарик RX', full:'L7 – Вкл/Выкл индикацию фонариком при входящем.'},
+    '8':{l:'Будет назначена', full:'L8 – Будет назначена в обновлениях.'},
+    '9':{l:'Пост. подсветка', full:'L9 – Вкл/Выкл постоянную подсветку.'},
+    '0':{l:'Смена модуляции', f:'FM Радио', full:'L0 – Смена модуляции AM/FM/USB.\nF0 – Радиовещание (FM радио).'},
+    '*':{s:'Сканер (част.)', l:'Захват частоты', f:'Захват субтона', full:'* – Сканирование по частоте.\nL* – Захват частоты.\nF* – Захват субтона.'},
+    '#F':{s:'Функциональная F', full:'#F – Функциональная «F».'}
+  },
+  SPECTRUM:{
+    M:{s:'Мониторинг регистров', full:'ДЕТАЛЬНЫЙ МОНИТОРИНГ В РЕЖИМЕ СПЕКТРА ПО КНОПКЕ «MENU» «MA».\nПеремещение по низкоуровневому меню регистров кнопками 2 и 8.\nСмена значений кнопками <= и =>.\n\nLNAS – Усиление LNA (Low Noise Amplifier).\nLNA – Усиление первого каскада LNA.\nPGA – Усиление PGA (Programmable Gain Amplifier).\nMIX – Усиление миксера.\nXTAL F MODE SELECT – Режим работы кварцевого фильтра.\nOFF AF RX DE-EMP – Отключение деэмфазиса.\nGAIN AFTER FM DEMOD – Громкость приёма.\nRF TX DEVIATION – Девиация частоты при передаче.\nCOMPRESS AF TX RATIO – Коэффициент компрессии аудио.\nCOMPRESS AF TX 0 DB – Уровень компрессии 0 db.\nCOMPRESS AF TX NOISE – Подавление шума.\nMIC AGC DISABLE – Отключение AGC микрофона.\nAFC RANGE SELECT – Диапазон работы AFC.\nAFC DISABLE – Отключение AFC.\nAFC SPEED – Скорость работы AFC.'},
+    '<':{s:'Навигация (Меню)', full:'<= – Навигация по меню и смена значений в регистровом меню.'},
+    '>':{s:'Навигация (Меню)', full:'=> – Навигация по меню и смена значений в регистровом меню.'},
+    Exit:{s:'Выход', full:'EXIT – Выход.'},
+    '1':{s:'Пропуск/Значение', full:'1 – Пропуск частоты в режиме сканирования.\nВ меню параметров – смена значения (вместе с кнопкой 3).'},
+    '2':{s:'Не назначена', full:'2 – Не назначена (использовать для включения подсветки).\nВ режиме истории – сохраняет частоту в свободный канал.\nВ меню регистров – навигация вниз.'},
+    '3':{s:'Полоса/Значение', full:'3 – В спектре ширина полосы пропускания.\nВ меню параметров – смена значения.\nВ режиме истории – удалить запись.'},
+    '4':{s:'Сканлисты/Бенды', full:'4 – Список сканлистов или бендов.\nУже в режиме выбора ей же отмечаем выбранные (выделены жирным и галкой справа).'},
+    '5':{s:'Меню/Скан', full:'5 – Меню параметров.\nНавигация по меню <= и =>.\nСмена значений кнопки 1 и 3.\nВ режиме истории - скан истории.'},
+    '6':{s:'Смена режима', full:'6 – Смена режимов спектроанализатора: Сканлисты / Частота / Диапазон / Бенды.'},
+    '7':{s:'Сохранить', full:'7 – Сохранение параметров.\nСохраните после настройки и выбора списков и параметры будут применяться после включения.'},
+    '8':{s:'Экран/Очистка', full:'8 – В спектре – смена экрана отображения.\nВ истории – очистка истории.\nВ меню регистров – навигация вверх.'},
+    '9':{s:'Модуляция', full:'9 – Смена модуляции AM/FM/USB.'},
+    '0':{s:'История/Сорт.', full:'0 – Перейти в режим истории.\nВнутри режима – сортировка истории.'},
+    '*':{s:'Переключить DYNSQL', full:'* и #F - Переключение уровня DYNSQL – Порог резкого скачка RSSI для мгновенного захвата пика.\nПри слабых и нечётких сигналах увеличьте или отключите – OFF. Это увеличит количество захватываемых сигналов, но снизит их чёткость.'},
+    '#F':{s:'Переключить DYNSQL', full:'* и #F - Переключение уровня DYNSQL – Порог резкого скачка RSSI для мгновенного захвата пика.\nПри слабых и нечётких сигналах увеличьте или отключите – OFF. Это увеличит количество захватываемых сигналов, но снизит их чёткость.'}
+  },
+  FM:{
+    M:{s:'Меню (не исп.)', full:'В режиме FM радио кнопка M не назначена.'},
+    '<':{s:'Поиск авто ←', full:'Кнопками <= и => ищите ближайшую доступную частоту вещания в автоматическом режиме.'},
+    '>':{s:'Поиск авто →', full:'Кнопками <= и => ищите ближайшую доступную частоту вещания в автоматическом режиме.'},
+    Exit:{s:'Выход из FM', full:'EXIT – Выход из режима радиоприёмника.'},
+    '1':{s:'Вызов (1)', l:'Сохранить (1)', full:'Короткое: Вызов сохранённой частоты под номером 1.\nДолгое: Сохранить текущую частоту под номером 1.'},
+    '2':{s:'Вызов (2)', l:'Сохранить (2)', full:'Короткое: Вызов сохранённой частоты под номером 2.\nДолгое: Сохранить текущую частоту под номером 2.'},
+    '3':{s:'Вызов (3)', l:'Сохранить (3)', full:'Короткое: Вызов сохранённой частоты под номером 3.\nДолгое: Сохранить текущую частоту под номером 3.'},
+    '4':{s:'Вызов (4)', l:'Сохранить (4)', full:'Короткое: Вызов сохранённой частоты под номером 4.\nДолгое: Сохранить текущую частоту под номером 4.'},
+    '5':{s:'Вызов (5)', l:'Сохранить (5)', full:'Короткое: Вызов сохранённой частоты под номером 5.\nДолгое: Сохранить текущую частоту под номером 5.'},
+    '6':{s:'Вызов (6)', l:'Сохранить (6)', full:'Короткое: Вызов сохранённой частоты под номером 6.\nДолгое: Сохранить текущую частоту под номером 6.'},
+    '7':{s:'Поиск', full:'Поиск станций (цифровой набор частоты).'},
+    '8':{s:'Поиск', full:'Поиск станций (цифровой набор частоты).'},
+    '9':{s:'Поиск', full:'Поиск станций (цифровой набор частоты).'},
+    '0':{s:'Поиск', full:'Поиск станций (цифровой набор частоты).'},
+    '*':{s:'Корт: Auto/Step', l:'Долг: выкл фон', full:'Кнопка * короткое нажатие сменит режим Auto на Step – ручной поиск с шагом.\nДлительное нажатие выключит фоновый приём.\nПередача с рации будет не слышна. Надпись On-air сменится на Silent.\nОповещение о приёме будет только мигающим зелёным диодом.\nПовторное нажатие вернет приём.'},
+    '#F':{s:'Функциональная F', full:'#F – Функциональная «F».'}
+  }
+};
+
+const menuItems = [
+  {id:1,code:"Step",title:"Шаг частоты",desc:"Шаг в кГц. UP/DOWN меняют частоту на это значение. Можно установить только частоту, кратную половине. CB: 5/10; SatCom/Avia: 5/25; Остальное: 6,25/12,5.",vals:["0.01","0.05","0.1","0.5","1.0","2.0","5.0","6.25","10.0","12.5","20.0","25.0","50.0","100.0"],cat:"Связь"},
+  {id:2,code:"SQL",title:"Шумоподавитель",desc:"Squelch 0-9. 0 = всегда открыто, 9 = строго. Для обоих диапазонов.",vals:["0","1","2","3","4","5","6","7","8","9"],cat:"Связь"},
+  {id:3,code:"Mode",title:"Режим демодуляции",desc:"FM (по умолч.), AM/USB — только приём.",vals:["FM","AM","USB"],cat:"Связь"},
+  {id:4,code:"Power",title:"Выходная мощность",desc:"LOW1-20mW ... HIGH-5W, OFF.",vals:["LOW1","LOW2","LOW3","LOW4","LOW5","MID","HIGH","OFF"],cat:"Связь"},
+  {id:5,code:"RxMode",title:"Режим приёма",desc:"MO, DWR, XB, DW — работа с основной/вторичной частотой.",vals:["MO","DWR","XB","DW"],cat:"Связь"},
+  {id:6,code:"RxDCS",title:"DCS приём",desc:"Цифровой субтон на приём (только FM).",vals:["OFF","D000-D777"],cat:"Связь"},
+  {id:7,code:"RxCTCS",title:"CTCS приём",desc:"Аналоговый субтон на приём (только FM).",vals:["OFF","67.0-254.1 Hz"],cat:"Связь"},
+  {id:8,code:"TxDCS",title:"DCS передача",desc:"Цифровой субтон на передачу (только FM).",vals:["OFF","D000-D777"],cat:"Связь"},
+  {id:9,code:"TxCTCS",title:"CTCS передача",desc:"Аналоговый субтон на передачу (только FM).",vals:["OFF","67.0-254.1 Hz"],cat:"Связь"},
+  {id:10,code:"TxOffs",title:"Смещение",desc:"Смещение TX в МГц при приёме/передаче на разных частотах.",vals:["0.000-999.999"],cat:"Связь"},
+  {id:11,code:"TxODir",title:"Направление +-",desc:"Направление смещения частоты передатчика.",vals:["+","-","OFF"],cat:"Связь"},
+  {id:12,code:"W/N",title:"Полоса",desc:"WIDE (25кГц) / NARROW (12,5 кГц).",vals:["WIDE","NARROW"],cat:"Связь"},
+  {id:13,code:"SetNFM",title:"NFM",desc:"Narrow или Narrower.",vals:["Narrow","Narrower"],cat:"Связь"},
+  {id:14,code:"Compnd",title:"Компандер",desc:"Фильтр аудио для чистого звука. Включать на обеих рациях.",vals:["ON","OFF"],cat:"Аудио"},
+  {id:15,code:"Scramb",title:"Скремблер",desc:"1-10 маска речи, 11-20 смена тона (при ScraEn=ON).",vals:["OFF","1-20"],cat:"Аудио"},
+  {id:16,code:"Roger",title:"Roger Beep",desc:"Сигнал конца передачи.",vals:["ON","OFF"],cat:"Аудио"},
+  {id:17,code:"1Call",title:"Быстрый вызов",desc:"Канал вызова по кнопке 1CALL.",vals:["CH000-998"],cat:"Связь"},
+  {id:18,code:"STE",title:"Хвост STE",desc:"Устранение шума в конце TX (тон 55Гц).",vals:["ON","OFF"],cat:"Аудио"},
+  {id:19,code:"RPSTE",title:"Ретранслятор STE",desc:"Хвостовой элиминатор для ретрансляторов.",vals:["ON","OFF"],cat:"Аудио"},
+  {id:20,code:"Sclist",title:"Список сканир.",desc:"Выбор списка сканирования.",vals:["1-20"],cat:"Связь"},
+  {id:21,code:"ChSave",title:"Сохранить канал",desc:"Запись частоты в память.",vals:["000-998"],cat:"Связь"},
+  {id:22,code:"ChDele",title:"Удалить канал",desc:"Удаление из памяти.",vals:["000-998"],cat:"Связь"},
+  {id:23,code:"ChName",title:"Имя канала",desc:"Текстовое название.",vals:["TEXT"],cat:"Связь"},
+  {id:24,code:"ChDisp",title:"Отображение",desc:"FREQ, NAME, BOTH.",vals:["FREQ","NAME","BOTH"],cat:"Дисплей"},
+  {id:25,code:"F1Shrt",title:"F1 Короткое",desc:"Назначение F1 (короткое).",vals:["MONITOR","FLASH","SCAN","SPECTRUM","NO","FM","TXP"],cat:"Связь"},
+  {id:26,code:"F1Long",title:"F1 Долгое",desc:"Назначение F1 (долгое).",vals:["MONITOR","FLASH","SCAN","SPECTRUM","NO","FM","TXP"],cat:"Связь"},
+  {id:27,code:"F2Shrt",title:"F2 Короткое",desc:"Назначение F2 (короткое).",vals:["MONITOR","FLASH","SCAN","SPECTRUM","NO","FM","TXP"],cat:"Связь"},
+  {id:28,code:"F2Long",title:"F2 Долгое",desc:"Назначение F2 (долгое).",vals:["MONITOR","FLASH","SCAN","SPECTRUM","NO","FM","TXP"],cat:"Связь"},
+  {id:29,code:"MLong",title:"M Долгое",desc:"Назначение M (долгое).",vals:["MENU","NO","SCAN","SPECTRUM","FLASH","FM"],cat:"Связь"},
+  {id:30,code:"KeyLck",title:"Блокировка",desc:"Автоблокировка клавиатуры.",vals:["OFF","5s","10s","15s","30s"],cat:"Безопасность"},
+  {id:31,code:"TxOut",title:"Тайм-аут TX",desc:"Макс. время PTT.",vals:["OFF","15","30","60","120","180"],cat:"Безопасность"},
+  {id:32,code:"BatSav",title:"Энергосбереж.",desc:"OFF / 1:1 / 1:2 / 1:4 / 1:8.",vals:["OFF","1:1","1:2","1:4","1:8"],cat:"Безопасность"},
+  {id:33,code:"Mic",title:"Чувствит. микро",desc:"Усиление микрофона.",vals:["1","2","3","4","5"],cat:"Аудио"},
+  {id:34,code:"POnMsg",title:"Сообщение старта",desc:"Power On Message.",vals:["ON","OFF"],cat:"Дисплей"},
+  {id:35,code:"BLTime",title:"Время подсветки",desc:"Длительность подсветки экрана.",vals:["OFF","3s","5s","10s","20s","60s","ALL ON"],cat:"Дисплей"},
+  {id:36,code:"BLMin",title:"Мин. яркость",desc:"Процент мин. подсветки.",vals:["10","20","30","40","50","60","70","80"],cat:"Дисплей"},
+  {id:37,code:"BLMax",title:"Макс. яркость",desc:"Процент макс. подсветки.",vals:["80","90","100"],cat:"Дисплей"},
+  {id:38,code:"BLTxRx",title:"Подсветка TX/RX",desc:"OFF / TX / RX / TX+RX.",vals:["OFF","TX","RX","TX+RX"],cat:"Дисплей"},
+  {id:39,code:"SetInv",title:"Инверсия",desc:"Инверсия цветов экрана.",vals:["ON","OFF"],cat:"Дисплей"},
+  {id:40,code:"BtnInv",title:"Инверсия кнопок",desc:"Смена UP/DOWN.",vals:["ON","OFF"],cat:"Дисплей"},
+  {id:41,code:"SetLck",title:"Тип блокировки",desc:"KEY или KEY+PTT.",vals:["KEY","KEY+PTT"],cat:"Безопасность"},
+  {id:42,code:"BatTxt",title:"Индикатор бат.",desc:"OFF / % / V.",vals:["OFF","%","V"],cat:"Дисплей"},
+  {id:43,code:"MicBar",title:"Бар микрофона",desc:"Показ уровня аудио.",vals:["ON","OFF"],cat:"Дисплей"},
+  {id:44,code:"SetTmr",title:"Таймеры RX/TX",desc:"Отображение таймеров.",vals:["ON","OFF"],cat:"Дисплей"},
+  {id:45,code:"FLock",title:"Блокировка част.",desc:"FCC, CE, RANGER и др.",vals:["OFF","RANGER","CB ONLY","144 ONLY","50 ONLY","350 ONLY","430 ONLY","438 ONLY","220 ONLY","FCC","CE"],cat:"Безопасность"},
+  {id:46,code:"ScraEn",title:"Вкл. скремблер",desc:"Глобальное ON/OFF.",vals:["ON","OFF"],cat:"Безопасность"},
+  {id:47,code:"FrCali",title:"Калибровка част.",desc:"Сохранение текущей частоты.",vals:["EXEC"],cat:"Калибровка",warn:"⚠️ Только при необходимости"},
+  {id:48,code:"BatCal",title:"Калибровка бат.",desc:"Battery Calibration.",vals:["EXEC"],cat:"Калибровка",warn:"⚠️ Разряженная батарея"},
+  {id:49,code:"BatTyp",title:"Тип батареи",desc:"Выбор ёмкости/типа.",vals:["1600 Li-ion","1800 Li-ion","2200 Li-ion","3000 NiMH","3500 NiMH","4000 Li-ion"],cat:"Калибровка"},
+  {id:50,code:"Reset",title:"Сброс",desc:"NOCH (сохранить каналы) / ALL (полный).",vals:["NOCH","ALL"],cat:"Безопасность",warn:"⚠️ ALL удалит все каналы"}
+];
+
+const specParams = [
+  {id:"DELAYRSSI",title:"DELAYRSSI",desc:"Задержка RSSI перед сменой частоты (мс). Влияет на скорость сканирования."},
+  {id:"SPECTRUMDELAY",title:"SPECTRUMDELAY",desc:"Пауза после обнаружения сигнала (мс). 0 = сразу дальше."},
+  {id:"MAXLISTENTIME",title:"MAXLISTENTIME",desc:"Макс. время прослушки (сек). После — продолжение скана."},
+  {id:"FSTART",title:"FSTART",desc:"Начальная частота (МГц)."},
+  {id:"FSTOP",title:"FSTOP",desc:"Конечная частота (МГц)."},
+  {id:"STEP",title:"STEP",desc:"Шаг скана (кГц): 0.01...100.0."},
+  {id:"LISTENBW",title:"LISTENBW",desc:"Полоса приёма: Wide (25кГц) / Narrow (12.5кГц)."},
+  {id:"MODULATION",title:"MODULATION",desc:"Вид модуляции: FM / AM."},
+  {id:"RX_BACKLIGHT_ON",title:"RX_BACKLIGHT_ON",desc:"Подсветка при приёме: ON / OFF."},
+  {id:"POWERSAVE",title:"POWERSAVE",desc:"Энергосбережение: Off / 100ms / 500ms / 1s / 2s / 5s."},
+  {id:"NOISLVL_OFF",title:"NOISLVL_OFF",desc:"Уровень шума для отключения приёма."},
+  {id:"POPUPS",title:"POPUPS",desc:"Время всплывающих сообщений (мс). 0 = выкл."},
+  {id:"RECORD_TRIG",title:"RECORD TRIG",desc:"Порог для записи в историю. Выше порог — сильнее сигнал."},
+  {id:"KEY_UNLOCKED",title:"KEY UNLOCKED",desc:"Время до автоблокировки клавиатуры (сек)."},
+  {id:"GLITCHMAX",title:"GLITCHMAX",desc:"Порог GLITCH индикатора BK4829. Выше = больше шумных сигналов валидны."},
+  {id:"SOUND_BOOST",title:"SOUND BOOST",desc:"Усиление звука, поднятие низких частот."},
+  {id:"PTT",title:"PTT",desc:"Действие при PTT: LAST VFO / HAZEL'S / LAST RECEIVED."},
+  {id:"MONITOR_SL",title:"MONITOR SL",desc:"Приоритет списка «MON» во всех сканах."},
+  {id:"CLEAR_HISTORY_ALL",title:"CLEAR HISTORY ALL",desc:"Очистка всей истории сканирования."},
+  {id:"CLEAR_HISTORY_N_BL",title:"CLEAR HISTORY N BL",desc:"Очистка истории без блэклиста."},
+  {id:"CLEAR_HISTORY_BL",title:"CLEAR HISTORY BL",desc:"Очистка блэклиста истории."},
+  {id:"DEFAULT_PARAMS",title:"DEFAULT PARAMS",desc:"Сброс параметров спектра на заводские."}
+];
+
+const lpdData = Array.from({length:69}, (_,i)=>({ch:i+1, freq:(433.075+i*0.025).toFixed(3), tags:[1,2,6,10,12,17,23].includes(i+1)?['8-канальный']:[]}));
+const pmrData = [{ch:1,freq:"446.00625"},{ch:2,freq:"446.01875"},{ch:3,freq:"446.03125"},{ch:4,freq:"446.04375"},{ch:5,freq:"446.05625"},{ch:6,freq:"446.06875"},{ch:7,freq:"446.08125"},{ch:8,freq:"446.09375"}];
+const cbData = [{ch:1,f:"26.965",t:""},{ch:2,f:"26.975",t:""},{ch:3,f:"26.985",t:""},{ch:4,f:"27.005",t:""},{ch:5,f:"27.015",t:""},{ch:6,f:"27.025",t:""},{ch:7,f:"27.035",t:""},{ch:8,f:"27.055",t:""},{ch:9,f:"27.065",t:"Экстренный",tag:"e"},{ch:10,f:"27.075",t:""},{ch:11,f:"27.085",t:""},{ch:12,f:"27.105",t:""},{ch:13,f:"27.115",t:""},{ch:14,f:"27.125",t:"Туристы",tag:"c"},{ch:15,f:"27.135",t:"Дальнобойщики",tag:"c"},{ch:16,f:"27.155",t:""},{ch:17,f:"27.165",t:""},{ch:18,f:"27.175",t:""},{ch:19,f:"27.185",t:"Дальнобойный СНГ",tag:"c"},{ch:20,f:"27.205",t:"Владивосток Авто"},{ch:21,f:"27.215",t:""},{ch:22,f:"27.225",t:""},{ch:23,f:"27.255",t:""},{ch:24,f:"27.235",t:""},{ch:25,f:"27.245",t:""},{ch:26,f:"27.265",t:""},{ch:27,f:"27.275",t:""},{ch:28,f:"27.285",t:""},{ch:29,f:"27.295",t:""},{ch:30,f:"27.305",t:"Цифровые (DRM)",tag:"w"},{ch:31,f:"27.315",t:""},{ch:32,f:"27.325",t:""},{ch:33,f:"27.335",t:""},{ch:34,f:"27.345",t:""},{ch:35,f:"27.355",t:""},{ch:36,f:"27.365",t:""},{ch:37,f:"27.375",t:""},{ch:38,f:"27.385",t:""},{ch:39,f:"27.395",t:""},{ch:40,f:"27.405",t:""}];
+const vhfData = [{f:"144.000",t:"Граница",tag:"w"},{f:"144.012-144.987",t:"Любительский",tag:"w"},{f:"145.212-145.487",t:"Любительский",tag:"w"},{f:"145.500",t:"Вызывная",tag:"c"},{f:"145.512-145.987",t:"Любительский",tag:"w"},{f:"146.000",t:"Граница",tag:"w"}];
+const otherFreqs = [{r:"118-137 МГц",t:"Авиация",tag:"w"},{r:"148-149, 171-173",t:"МВД РФ",tag:"w"},{r:"406-407 МГц",t:"КОСПАС-САРСАТ",tag:"e"},{r:"328.6-335.4",t:"Радионавигация",tag:"w"},{r:"393.1, 380, 254, 173-174",t:"Минобороны",tag:"w"},{r:"450-470 МГц",t:"Служебные",tag:"w"},{r:"495-505 МГц",t:"Морзе/Бедствие",tag:"e"},{r:"151-156 МГц",t:"ЖД связь",tag:"w"},{r:"149-171 МГц",t:"Правительственная",tag:"w"},{r:"137-144 МГц",t:"Космос/Воздух",tag:"w"}];
+
+let currentMode = 'MR', currentBand = 'LPD', resetInterval = null;
+const guides = {
+  flash:[{t:"Вкл. рацию в режиме прошивки (PTT + включение)"},{t:"Подготовьте кабель USB-C с передачей данных"},{t:"Запустите UV TOOL на ПК"},{t:"Подключите рацию кабелем"},{t:"В UV TOOL определите порт, нажмите «Обновить»"},{t:"Выберите прошивку КА-52, нажмите «Прошить»"},{t:"Дождитесь завершения. Не отключайте кабель!"}],
+  reset:[{t:"Выключите рацию"},{t:"Нажмите и удерживайте PTT + Fn2"},{t:"Не отпуская, включите рацию"},{t:"На экране без подсветки появится предупреждение"},{t:"Удерживайте 4 секунды до сброса"},{t:"Рация перезагрузится"}],
+  channels:[{t:"Включите рацию в обычном режиме"},{t:"Подключите к ПК кабелем USB-C"},{t:"Откройте UV TOOL"},{t:"Перейдите в редактор каналов"},{t:"Нажмите кнопку загрузки"},{t:"В окне выберите формат КА-52"},{t:"Нажмите «Записать в рацию»"},{t:"Дождитесь загрузки каналов/бендов"}]
+};
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderFreq(); renderGuides(); updateContextInfo();
+});
+
+function setupNavigation(){document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+b.dataset.tab).classList.add('active');});}
+function setupModeSwitcher(){document.querySelectorAll('.mode-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mode-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');currentMode=b.dataset.mode;renderKeypad(); updateContextInfo();});}
+function updateContextInfo(){ document.getElementById('mode-context-info').innerHTML = contextInfo[currentMode] || ''; }
+function setupFilters(){
+  document.querySelectorAll('#menu-filters .filter-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#menu-filters .filter-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');filterMenu();});
+  document.querySelectorAll('#tab-freq .filter-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tab-freq .filter-btn').forEach(i=>i.classList.remove('active'));b.classList.add('active');currentBand=b.dataset.band;renderFreq();});
+}
+
+function renderKeypad(){
+  const pad=document.getElementById('keypad'), data=keyData[currentMode]||{};
+  let html='';
+  keyLayout.forEach(row=>row.forEach(k=>{
+    if(!k) html+=`<div class="key placeholder"></div>`;
+    else{
+      const act=data[k]||{};
+      let subs='';
+      if(act.s && !act.s.startsWith('(')) subs+=`<span class="sub sub-s">${act.s.length>18?act.s.slice(0,18)+'…':act.s}</span>`; 
+      if(act.l) subs+=`<span class="sub sub-l">L ${act.l}</span>`;
+      if(act.f) subs+=`<span class="sub sub-f">F ${act.f}</span>`;
+      if(act.s && act.s.startsWith('(')) subs+=`<span class="sub sub-s">${act.s}</span>`;
+      html+=`<div class="key" onclick="showKeyModal('${k}')"><div class="num">${k}</div><div class="subs">${subs}</div></div>`;
+    }
+  }));
+  pad.innerHTML=html;
+}
+
+function showKeyModal(k){
+  const modal=document.getElementById('key-modal'), data=keyData[currentMode]||{}, act=data[k]||{};
+  document.getElementById('km-title').textContent=`Кнопка ${k} [${currentMode}]`;
+  let b='';
+  if(act.s) b+=`<div class="detail-row"><div class="detail-label">Простое</div><div class="detail-value">${act.s}</div></div>`;
+  if(act.l) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--danger)">Долгое (L)</div><div class="detail-value">${act.l}</div></div>`;
+  if(act.f) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--primary)">После F</div><div class="detail-value">${act.f}</div></div>`;
+  if(act.full) b+=`<div class="full-desc">${act.full}</div>`;
+  document.getElementById('km-body').innerHTML=b;
+  modal.classList.add('show');
+}
+function closeKeyModal(){document.getElementById('key-modal').classList.remove('show');}
+document.getElementById('key-modal').addEventListener('click',e=>{if(e.target.id==='key-modal')closeKeyModal();});
+
+function renderMenu(){
+  const list=document.getElementById('menu-list');
+  const s=document.getElementById('menu-search').value.toLowerCase();
+  const c=document.querySelector('#menu-filters .filter-btn.active').dataset.cat;
+  let html='';
+  menuItems.filter(m=>(!s||m.title.toLowerCase().includes(s)||m.code.toLowerCase().includes(s)||m.id.toString().includes(s))&&(c==='all'||m.cat===c))
+  .forEach(m=>{
+    html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-id">${m.id}/50</span><span class="c-code">${m.code}</span><span class="c-title">${m.title}</span></div><div class="c-warn">${m.warn||''}</div><div class="c-desc">${m.desc}${m.vals?`<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px;">${m.vals.map(v=>`<span style="background:var(--bg);padding:2px 5px;border-radius:4px;font-size:0.65rem;">${v}</span>`).join('')}</div>`:''}</div></div>`;
+  });
+  list.innerHTML=html||'<div class="empty-state">Ничего не найдено</div>';
+}
+function filterMenu(){renderMenu();}
+
+function renderSpectrum(){
+  const list=document.getElementById('spectrum-list');
+  let html='';
+  specParams.forEach(p=>{
+    html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-code" style="color:var(--accent)">${p.id}</span><span class="c-title">${p.title}</span></div><div class="c-desc">${p.desc}</div></div>`;
+  });
+  list.innerHTML=html;
+}
+
+function renderFreq(){
+  const s=document.getElementById('freq-search').value.toLowerCase();
+  const th=document.getElementById('freq-head'), tb=document.getElementById('freq-body');
+  let rows=[], cols=[];
+  if(currentBand==='LPD'){cols=['Канал','Частота (МГц)'];rows=lpdData.map(d=>({c:d.ch,f:d.freq,tags:d.tags}));}
+  else if(currentBand==='PMR'){cols=['Канал','Частота (МГц)'];rows=pmrData.map(d=>({c:d.ch,f:d.freq,tags:['Без лицензии']}));}
+  else if(currentBand==='CB'){cols=['Канал','Частота','Отметка'];rows=cbData.map(d=>({c:d.ch,f:d.f,note:d.t,tag:d.tag}));}
+  else if(currentBand==='VHF'){cols=['Частота (МГц)','Отметка'];rows=vhfData.map(d=>({c:'—',f:d.f,note:d.t,tag:d.tag}));}
+  else{cols=['Диапазон','Описание'];rows=otherFreqs.map(d=>({c:'—',f:d.r,note:d.t,tag:d.tag}));}
+  if(s) rows=rows.filter(d=>d.c.toString().includes(s)||d.f.toLowerCase().includes(s)||(d.note||'').toLowerCase().includes(s));
+  th.innerHTML=cols.map(h=>`<th>${h}</th>`).join('');
+  tb.innerHTML=rows.map(d=>{
+    const tags=d.tag==='e'?'<span class="tag tag-e">Экстренный</span>':d.tag==='w'?'<span class="tag tag-w">Лицензия</span>':d.tag==='c'?'<span class="tag tag-c">Свободный</span>':(d.tags||[]).map(t=>`<span class="tag tag-c">${t}</span>`).join('');
+    return `<tr>${currentBand!=='VHF'&&currentBand!=='OTHER'?`<td>${d.c}</td>`:''}<td><strong>${d.f}</strong> <button class="copy-btn" onclick="copyClip('${d.f}')">📋</button></td><td>${tags}${d.note?`<div style="font-size:0.65rem;color:var(--text-dim);margin-top:2px;">${d.note}</div>`:''}</td></tr>`;
+  }).join('');
+}
+function filterFreqs(){renderFreq();}
+function copyClip(t){navigator.clipboard.writeText(t).then(()=>showToast('Скопировано: '+t));}
+
+function showGuide(type){document.querySelectorAll('.guide-content').forEach(g=>g.style.display='none');document.querySelectorAll('.guide-tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');document.getElementById('guide-'+type).style.display='block';}
+function renderGuides(){['flash','reset','channels'].forEach(k=>{document.getElementById('checklist-'+k).innerHTML=guides[k].map((g,i)=>`<li onclick="toggleCheck(this)"><span class="step-num">${i+1}</span><input type="checkbox" onchange="checkStep(this)"><span>${g.t}</span></li>`).join('');});}
+function toggleCheck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;checkStep(cb);}
+function checkStep(cb){cb.closest('li').classList.toggle('done',cb.checked);}
+let resetTimer=null;
+function startResetTimer(){
+  if(resetTimer)return;
+  let t=4.0, d=document.getElementById('timer-display'), b=document.querySelector('#reset-timer-box .btn');
+  b.disabled=true;b.textContent='Удерживайте...';
+  resetTimer=setInterval(()=>{t-=0.1;d.textContent=t.toFixed(1)+' сек';if(t<=0){clearInterval(resetTimer);resetTimer=null;d.textContent='✅ СБРОС';b.disabled=false;b.textContent='⏱️ Таймер';showToast('Сброс выполнен!');document.querySelectorAll('#checklist-reset li').forEach(l=>{l.classList.add('done');l.querySelector('input').checked=true;});}},100);
+}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+</script>
+</body>
+</html>
+
