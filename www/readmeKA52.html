@@ -170,10 +170,10 @@ body { padding-bottom: 80px; }
 
   <div id="tab-guides" class="tab-content">
     <h2 class="section-title" style="margin-bottom:10px;">Чек-листы для работы с UV TOOL на ПК</h2>
-    <div class="filter-bar">
-      <button class="guide-tab active" onclick="showGuide('flash')">Прошивка</button>
-      <button class="guide-tab" onclick="showGuide('reset')">Сброс</button>
-      <button class="guide-tab" onclick="showGuide('channels')">Каналы</button>
+    <div class="mode-switcher">
+      <button class="mode-btn active" onclick="showGuide('flash')">Прошивка</button>
+      <button class="mode-btn" onclick="showGuide('reset')">Сброс</button>
+      <button class="mode-btn" onclick="showGuide('channels')">Каналы</button>
     </div>
     <div id="guide-flash" class="guide-content"><ul class="checklist" id="checklist-flash"></ul></div>
     <div id="guide-reset" class="guide-content" style="display:none;">
@@ -460,7 +460,7 @@ function renderMonitoring(){
   list.innerHTML=html;
 }
 
-function showGuide(type){document.querySelectorAll('.guide-content').forEach(g=>g.style.display='none');document.querySelectorAll('.guide-tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');document.getElementById('guide-'+type).style.display='block';}
+function showGuide(type){document.querySelectorAll('.guide-content').forEach(g=>g.style.display='none');document.querySelectorAll('.mode-btn').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');document.getElementById('guide-'+type).style.display='block';}
 function renderGuides(){['flash','reset','channels'].forEach(k=>{document.getElementById('checklist-'+k).innerHTML=guides[k].map((g,i)=>`<li onclick="toggleCheck(this)"><span class="step-num">${i+1}</span><input type="checkbox" onchange="checkStep(this)"><span>${g.t}</span></li>`).join('');});}
 function toggleCheck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;checkStep(cb);}
 function checkStep(cb){cb.closest('li').classList.toggle('done',cb.checked);}
