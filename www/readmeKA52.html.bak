@@ -8,16 +8,17 @@
 <style>
 :root {
   --bg: #0a0e14; --bg-card: #111820; --bg-hover: #1c2533; --border: #2a3547;
-  --text: #e8edf5; --text-dim: #8892a4; --primary: #3b82f6; --primary-dim: #2563eb;
-  --accent: #10b981; --warn: #f59e0b; --danger: #ef4444; --radius: 10px;
+  --text: #e8edf5; --text-dim: #8892a4; --primary: #860606; --primary-dim: #6b0505;
+  --accent: #10b981; --warn: #f59e0b; --danger: #860606; --radius: 0px;
   --shadow: 0 4px 16px rgba(0,0,0,0.4);
+  --key-blue: #1E4D79; --key-blue-dim: #163a5c;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html, body { height:100%; font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
 body { padding-bottom: 80px; }
 .header { position:sticky; top:0; z-index:100; background:rgba(10,14,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; }
 .header h1 { font-size:1.05rem; font-weight:700; letter-spacing:-0.3px; }
-.header .badge { background:var(--primary); color:#fff; font-size:0.65rem; padding:2px 8px; border-radius:99px; font-weight:600; }
+.header .badge { background:var(--primary); color:#fff; font-size:0.65rem; padding:8px 8px; border-radius:0; font-weight:600; }
 .nav { position:fixed; bottom:0; left:0; right:0; z-index:100; background:rgba(10,14,20,0.98); backdrop-filter:blur(12px); border-top:1px solid var(--border); display:flex; padding:6px 0 env(safe-area-inset-bottom,6px); }
 .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 4px; cursor:pointer; transition:all 0.2s; color:var(--text-dim); border:none; background:none; font-size:0.65rem; font-family:inherit; }
 .nav-item.active { color:var(--primary); }
@@ -28,19 +29,19 @@ body { padding-bottom: 80px; }
 .search-box { position:sticky; top:46px; z-index:90; margin-bottom:12px; }
 .search-box input { width:100%; background:var(--bg-card); border:1px solid var(--border); color:var(--text); padding:10px 12px 10px 36px; border-radius:var(--radius); font-size:0.9rem; outline:none; font-family:inherit; }
 .search-box::before { content: "🔍"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.8rem; pointer-events:none; }
-.search-box input:focus { border-color:var(--primary); box-shadow:0 0 0 2px rgba(59,130,246,0.2); }
+.search-box input:focus { border-color:var(--primary); box-shadow:0 0 0 2px rgba(134,6,6,0.2); }
 .mode-switcher { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
-.mode-btn { padding:7px 12px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:var(--radius); cursor:pointer; font-size:0.8rem; font-family:inherit; font-weight:500; transition:all 0.2s; }
+.mode-btn { padding:7px 12px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:0; cursor:pointer; font-size:0.8rem; font-family:inherit; font-weight:500; transition:all 0.2s; }
 .mode-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
 .legend { display:flex; gap:10px; margin-bottom:10px; font-size:0.7rem; color:var(--text-dim); justify-content:center; flex-wrap:wrap; }
 .legend span { display:flex; align-items:center; gap:4px; }
-.legend .dot { width:8px; height:8px; border-radius:2px; }
-.dot-s { background:#fff; } .dot-l { background:var(--danger); } .dot-f { background:var(--primary); }
-.info-card { background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.25); border-radius:var(--radius); padding:12px; margin-bottom:12px; font-size:0.85rem; line-height:1.5; }
+.legend .dot { width:8px; height:8px; border-radius:0; }
+.dot-s { background:#fff; } .dot-l { background:var(--primary); } .dot-f { background:var(--key-blue); }
+.info-card { background:rgba(134,6,6,0.4); border:2px solid rgba(134,6,6,0); border-radius:6; padding:12px; margin-bottom:12px; font-size:0.85rem; line-height:1.5; }
 .info-card strong { color:var(--primary); }
 .keypad { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; max-width:420px; margin:0 auto; }
 .key { 
-  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); 
+  background:var(--bg-card); border:1px solid var(--border); border-radius:0; 
   display:flex; flex-direction:column; justify-content:center; align-items:center; 
   height:82px; width:100%; cursor:pointer; transition:all 0.15s; user-select:none; 
   padding:4px; overflow:hidden; position:relative;
@@ -49,17 +50,17 @@ body { padding-bottom: 80px; }
 .key .num { font-size:1.35rem; font-weight:700; line-height:1; margin-bottom:3px; flex-shrink:0; }
 .key .subs { display:flex; flex-direction:column; align-items:center; gap:2px; width:100%; max-height:38px; overflow:hidden; flex-shrink:1; }
 .key .sub { 
-  font-size:0.55rem; padding:1px 3px; border-radius:4px; line-height:1.15; 
+  font-size:0.55rem; padding:1px 3px; border-radius:0; line-height:1.15; 
   text-align:center; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; 
 }
-.sub-l { background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.25); }
-.sub-f { background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
+.sub-l { background:rgba(134,6,6,0.12); color:#c96b6b; border:1px solid rgba(134,6,6,0.25); }
+.sub-f { background:rgba(30,77,121,0.12); color:#6B9AC4; border:1px solid rgba(30,77,121,0.25); }
 .sub-s { background:rgba(255,255,255,0.08); color:#e8edf5; border:1px solid rgba(255,255,255,0.15); }
 
 .key-modal { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); align-items:flex-end; justify-content:center; }
 .key-modal.show { display:flex; animation: slideUp 0.2s ease; }
 @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
-.key-modal-content { background:var(--bg-card); border:1px solid var(--border); border-radius:16px 16px 0 0; padding:18px; width:100%; max-width:500px; max-height:75vh; overflow-y:auto; }
+.key-modal-content { background:var(--bg-card); border:1px solid var(--border); border-radius:0; padding:18px; width:100%; max-width:500px; max-height:75vh; overflow-y:auto; }
 .key-modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
 .key-modal-close { background:none; border:none; color:var(--text-dim); font-size:1.4rem; cursor:pointer; padding:4px; }
 .detail-row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
@@ -69,10 +70,10 @@ body { padding-bottom: 80px; }
 .full-desc { font-size: 0.85rem; line-height: 1.6; color: var(--text); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); white-space: pre-line; }
 
 .compact-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:8px; }
-.compact-card { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:10px 12px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; }
+.compact-card { background:var(--bg-card); border:1px solid var(--border); border-radius:0; padding:10px 12px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; }
 .compact-card:hover { background:var(--bg-hover); border-color:var(--primary); }
 .compact-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
-.c-id { background:var(--primary); color:#fff; padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:700; flex-shrink:0; }
+.c-id { background:var(--primary); color:#fff; padding:1px 5px; border-radius:0; font-size:0.65rem; font-weight:700; flex-shrink:0; }
 .c-code { font-family:monospace; font-size:0.95rem; font-weight:700; color:var(--text); flex-shrink:0; }
 .c-title { font-weight:600; font-size:0.8rem; color:var(--text-dim); flex:1; }
 .c-desc { font-size:0.75rem; color:var(--text-dim); margin-top:4px; display:none; line-height:1.4; border-top:1px solid var(--border); padding-top:4px; }
@@ -82,33 +83,33 @@ body { padding-bottom: 80px; }
 .compact-card.open .c-warn { display:block; }
 
 .filter-bar { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
-.filter-btn { padding:5px 10px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:6px; font-size:0.75rem; cursor:pointer; font-family:inherit; }
+.filter-btn { padding:5px 10px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); border-radius:0; font-size:0.75rem; cursor:pointer; font-family:inherit; }
 .filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
 
-.freq-table-wrap { overflow-x:auto; margin-top:8px; border:1px solid var(--border); border-radius:8px; }
+.freq-table-wrap { overflow-x:auto; margin-top:8px; border:1px solid var(--border); border-radius:0; }
 .freq-table { width:100%; border-collapse:collapse; font-size:0.75rem; }
 .freq-table th { background:var(--bg-card); color:var(--text-dim); padding:8px; text-align:left; font-weight:600; position:sticky; top:0; }
 .freq-table td { padding:8px; border-bottom:1px solid var(--border); }
 .freq-table tr:hover td { background:var(--bg-hover); }
-.tag { display:inline-block; font-size:0.6rem; padding:2px 5px; border-radius:4px; margin-right:4px; font-weight:500; }
-.tag-e { background:rgba(239,68,68,0.15); color:var(--danger); }
+.tag { display:inline-block; font-size:0.6rem; padding:2px 5px; border-radius:0; margin-right:4px; font-weight:500; }
+.tag-e { background:rgba(134,6,6,0.15); color:var(--danger); }
 .tag-c { background:rgba(16,185,129,0.15); color:var(--accent); }
-.tag-f { background:rgba(59,130,246,0.15); color:var(--primary); }
+.tag-f { background:rgba(134,6,6,0.15); color:var(--primary); }
 .tag-w { background:rgba(245,158,11,0.15); color:var(--warn); }
 .copy-btn { background:none; border:none; color:var(--primary); cursor:pointer; font-size:0.75rem; padding:0 4px; }
 
 .checklist { list-style:none; }
-.checklist li { display:flex; align-items:center; gap:10px; padding:12px 10px; border-bottom:1px solid var(--border); background:var(--bg-card); margin-bottom:4px; border-radius:8px; font-size:0.85rem; }
+.checklist li { display:flex; align-items:center; gap:10px; padding:12px 10px; border-bottom:1px solid var(--border); background:var(--bg-card); margin-bottom:4px; border-radius:0; font-size:0.85rem; }
 .checklist input[type="checkbox"] { width:18px; height:18px; accent-color:var(--primary); cursor:pointer; }
 .checklist li.done { opacity:0.5; text-decoration:line-through; }
-.step-num { background:var(--primary); color:#fff; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:0.7rem; font-weight:600; flex-shrink:0; }
-.timer-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; text-align:center; margin-top:12px; }
+.step-num { background:var(--primary); color:#fff; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:0; font-size:0.7rem; font-weight:600; flex-shrink:0; }
+.timer-box { background:var(--bg-card); border:1px solid var(--border); border-radius:0; padding:16px; text-align:center; margin-top:12px; }
 .timer-display { font-size:2rem; font-weight:700; font-variant-numeric:tabular-nums; margin:10px 0; }
-.btn { padding:10px 16px; border:none; border-radius:var(--radius); font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.btn { padding:10px 16px; border:none; border-radius:0; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; }
 .btn-primary { background:var(--primary); color:#fff; }
 .btn-warn { background:var(--warn); color:#111; }
 .btn:disabled { opacity:0.5; cursor:not-allowed; }
-.toast { position:fixed; bottom:75px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--accent); color:#fff; padding:8px 18px; border-radius:99px; font-size:0.8rem; font-weight:500; opacity:0; transition:all 0.3s; z-index:300; pointer-events:none; white-space:nowrap; }
+.toast { position:fixed; bottom:75px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--accent); color:#fff; padding:8px 18px; border-radius:0; font-size:0.8rem; font-weight:500; opacity:0; transition:all 0.3s; z-index:300; pointer-events:none; white-space:nowrap; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 @media (max-width:480px) {
   .keypad { gap:5px; max-width:100%; }
@@ -118,7 +119,7 @@ body { padding-bottom: 80px; }
   .compact-grid { grid-template-columns:1fr; }
 }
 ::-webkit-scrollbar { width:5px; height:5px; }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:0; }
 </style>
 </head>
 <body>
@@ -128,7 +129,7 @@ body { padding-bottom: 80px; }
     <h1>КА-52 Alligator </h1>
     <div style="font-size:0.6rem;color:var(--text-dim);margin-top:2px;">Quansheng UV-K1 и UV-K5V3</div>
   </div>
-  <span style="font-size:1 rem;color:var(--text-dim);font-weight:400;">Инструкция</span>
+  <span style="font-size:1 rem;color:var(--text-dim);font-weight:800;">Инструкция</span>
   <span class="badge">ka52.ouro.V.5.1.8</span>
 </div>
 
@@ -165,8 +166,15 @@ body { padding-bottom: 80px; }
   </div>
 
   <div id="tab-spectrum" class="tab-content">
-    <h2 class="section-title" style="margin-top:0">⚙️ Параметры спектроанализатора</h2>
+    <h2 class="section-title" style="margin-bottom:10px;">Параметры спектроанализатора</h2>
+	<div class="info-card" style="margin-bottom:16px;"><b>Навигация:</b> Перемещение по меню — кнопки <b>2</b> и <b>8</b>. Смена значений — кнопки <b>&lt;</b> и <b>&gt;</b>.</div>
     <div class="compact-grid" id="spectrum-list"></div>
+  </div>
+
+  <div id="tab-monitoring" class="tab-content">
+    <h2 class="section-title" style="margin-bottom:10px;">Детальный мониторинг (MENU → M<span style="text-transform: uppercase;">A</span>)</h2>
+    <div class="info-card" style="margin-bottom:16px;"><b>Навигация:</b> Перемещение по меню — кнопки <b>2</b> и <b>8</b>. Смена значений — кнопки <b>&lt;</b> и <b>&gt;</b>.</div>
+    <div class="compact-grid" id="monitoring-list"></div>
   </div>
 
   <div id="tab-freq" class="tab-content">
@@ -206,6 +214,7 @@ body { padding-bottom: 80px; }
   <button class="nav-item active" data-tab="keyboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="7" cy="10" r="1.5"/><circle cx="12" cy="10" r="1.5"/><circle cx="17" cy="10" r="1.5"/><circle cx="7" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/><circle cx="17" cy="14" r="1.5"/></svg>Клавиатура</button>
   <button class="nav-item" data-tab="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>Меню</button>
   <button class="nav-item" data-tab="spectrum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M4 20V10M8 20V4M12 20V8M16 20V12M20 20V6"/></svg>Спектр</button>
+  <button class="nav-item" data-tab="monitoring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Мониторинг</button>
   <button class="nav-item" data-tab="freq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M6 8l6 4-6 4V8zM18 8l-6 4 6 4V8z"/></svg>Частоты</button>
   <button class="nav-item" data-tab="guides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Гайды</button>
 </nav>
@@ -351,28 +360,46 @@ const menuItems = [
 ];
 
 const specParams = [
-  {id:"DELAYRSSI",title:"DELAYRSSI",desc:"Задержка RSSI перед сменой частоты (мс). Влияет на скорость сканирования."},
-  {id:"SPECTRUMDELAY",title:"SPECTRUMDELAY",desc:"Пауза после обнаружения сигнала (мс). 0 = сразу дальше."},
-  {id:"MAXLISTENTIME",title:"MAXLISTENTIME",desc:"Макс. время прослушки (сек). После — продолжение скана."},
-  {id:"FSTART",title:"FSTART",desc:"Начальная частота (МГц)."},
-  {id:"FSTOP",title:"FSTOP",desc:"Конечная частота (МГц)."},
-  {id:"STEP",title:"STEP",desc:"Шаг скана (кГц): 0.01...100.0."},
-  {id:"LISTENBW",title:"LISTENBW",desc:"Полоса приёма: Wide (25кГц) / Narrow (12.5кГц)."},
-  {id:"MODULATION",title:"MODULATION",desc:"Вид модуляции: FM / AM."},
-  {id:"RX_BACKLIGHT_ON",title:"RX_BACKLIGHT_ON",desc:"Подсветка при приёме: ON / OFF."},
-  {id:"POWERSAVE",title:"POWERSAVE",desc:"Энергосбережение: Off / 100ms / 500ms / 1s / 2s / 5s."},
-  {id:"NOISLVL_OFF",title:"NOISLVL_OFF",desc:"Уровень шума для отключения приёма."},
-  {id:"POPUPS",title:"POPUPS",desc:"Время всплывающих сообщений (мс). 0 = выкл."},
-  {id:"RECORD_TRIG",title:"RECORD TRIG",desc:"Порог для записи в историю. Выше порог — сильнее сигнал."},
-  {id:"KEY_UNLOCKED",title:"KEY UNLOCKED",desc:"Время до автоблокировки клавиатуры (сек)."},
-  {id:"GLITCHMAX",title:"GLITCHMAX",desc:"Порог GLITCH индикатора BK4829. Выше = больше шумных сигналов валидны."},
-  {id:"SOUND_BOOST",title:"SOUND BOOST",desc:"Усиление звука, поднятие низких частот."},
-  {id:"PTT",title:"PTT",desc:"Действие при PTT: LAST VFO / HAZEL'S / LAST RECEIVED."},
-  {id:"MONITOR_SL",title:"MONITOR SL",desc:"Приоритет списка «MON» во всех сканах."},
-  {id:"CLEAR_HISTORY_ALL",title:"CLEAR HISTORY ALL",desc:"Очистка всей истории сканирования."},
-  {id:"CLEAR_HISTORY_N_BL",title:"CLEAR HISTORY N BL",desc:"Очистка истории без блэклиста."},
-  {id:"CLEAR_HISTORY_BL",title:"CLEAR HISTORY BL",desc:"Очистка блэклиста истории."},
-  {id:"DEFAULT_PARAMS",title:"DEFAULT PARAMS",desc:"Сброс параметров спектра на заводские."}
+  {id:"DELAYRSSI",title:"Задержка RSSI",desc:"Задержка RSSI перед сменой частоты (мс). Влияет на скорость сканирования."},
+  {id:"SPECTRUMDELAY",title:"Задержка спектра",desc:"Пауза после обнаружения сигнала (мс). 0 = сразу дальше."},
+  {id:"MAXLISTENTIME",title:"Макс. время прослушки",desc:"Макс. время прослушки (сек). После — продолжение скана."},
+  {id:"FSTART",title:"Начальная частота",desc:"Начальная частота (МГц)."},
+  {id:"FSTOP",title:"Конечная частота",desc:"Конечная частота (МГц)."},
+  {id:"STEP",title:"Шаг сканирования",desc:"Шаг скана (кГц): 0.01...100.0."},
+  {id:"LISTENBW",title:"Полоса приёма",desc:"Полоса приёма: Wide (25кГц) / Narrow (12.5кГц)."},
+  {id:"MODULATION",title:"Тип модуляции",desc:"Вид модуляции: FM / AM."},
+  {id:"RX_BACKLIGHT_ON",title:"Подсветка приёма",desc:"Подсветка при приёме: ON / OFF."},
+  {id:"POWERSAVE",title:"Энергосбережение",desc:"Энергосбережение: Off / 100ms / 500ms / 1s / 2s / 5s."},
+  {id:"NOISLVL_OFF",title:"Уровень шума",desc:"Уровень шума для отключения приёма."},
+  {id:"POPUPS",title:"Всплывающие сообщения",desc:"Время всплывающих сообщений (мс). 0 = выкл."},
+  {id:"RECORD_TRIG",title:"Порог записи",desc:"Порог для записи в историю. Выше порог — сильнее сигнал."},
+  {id:"KEY_UNLOCKED",title:"Автоблокировка клавиатуры",desc:"Время до автоблокировки клавиатуры (сек)."},
+  {id:"GLITCHMAX",title:"Порог GLITCH",desc:"Порог GLITCH индикатора BK4829. Выше = больше шумных сигналов валидны."},
+  {id:"SOUND_BOOST",title:"Усиление звука",desc:"Усиление звука, поднятие низких частот."},
+  {id:"PTT",title:"Действие PTT",desc:"Действие при PTT: LAST VFO / HAZEL'S / LAST RECEIVED."},
+  {id:"MONITOR_SL",title:"Приоритет MON",desc:"Приоритет списка «MON» во всех сканах."},
+  {id:"CLEAR_HISTORY_ALL",title:"Очистить всю историю",desc:"Очистка всей истории сканирования."},
+  {id:"CLEAR_HISTORY_N_BL",title:"Очистить историю без БЛ",desc:"Очистка истории без блэклиста."},
+  {id:"CLEAR_HISTORY_BL",title:"Очистить блэклист",desc:"Очистка блэклиста истории."},
+  {id:"DEFAULT_PARAMS",title:"Сброс параметров",desc:"Сброс параметров спектра на заводские."}
+];
+
+const monitoringParams = [
+  {id:"LNAS",title:"LNAS",desc:"Усиление LNA (Low Noise Amplifier) – ступени усиления сигнала перед микшером."},
+  {id:"LNA",title:"LNA",desc:"Усиление первого каскада LNA – выше = сильнее сигнал, но больше помех."},
+  {id:"PGA",title:"PGA",desc:"Усиление Programmable Gain Amplifier (после LNA) – баланс между чувствительностью и искажениями."},
+  {id:"MIX",title:"MIX",desc:"Усиление миксера (смешивание частот) – выше = лучше динамический диапазон, но больше шумов."},
+  {id:"XTAL_F_MODE_SELECT",title:"XTAL F MODE SELECT",desc:"Режим работы кварцевого фильтра (XTAL). Фильтрация (снижает шум, но может искажать)."},
+  {id:"OFF_AF_RX_DE-EMP",title:"OFF AF RX DE-EMP",desc:"Отключение демфазиса (коррекция предискажений) при приёме."},
+  {id:"GAIN_AFTER_FM_DEMOD",title:"GAIN AFTER FM DEMOD",desc:"Регулирует громкость приёма."},
+  {id:"RF_TX_DEVIATION",title:"RF TX DEVIATION",desc:"Отклонение частоты при передаче (FM deviation) – влияет на ширину полосы передачи (выше = громче)."},
+  {id:"COMPRESS_AF_TX_RATIO",title:"COMPRESS AF TX RATIO",desc:"Коэффициент компрессии аудио при передаче – сжимает динамический диапазон."},
+  {id:"COMPRESS_AF_TX_0_DB",title:"COMPRESS AF TX 0 DB",desc:"Уровень компрессии 0 dB при передаче – точка начала компрессии."},
+  {id:"COMPRESS_AF_TX_NOISE",title:"COMPRESS AF TX NOISE",desc:"Подавление шума в тихих местах."},
+  {id:"MIC_AGC_DISABLE",title:"MIC AGC DISABLE",desc:"Отключение автоматической регулировки усиления микрофона (AGC)."},
+  {id:"AFC_RANGE_SELECT",title:"AFC RANGE SELECT",desc:"Диапазон работы AFC (автоподстройки частоты)."},
+  {id:"AFC_DISABLE",title:"AFC DISABLE",desc:"Отключение AFC."},
+  {id:"AFC_SPEED",title:"AFC SPEED",desc:"Скорость работы AFC."}
 ];
 
 const lpdData = Array.from({length:69}, (_,i)=>({ch:i+1, freq:(433.075+i*0.025).toFixed(3), tags:[1,2,6,10,12,17,23].includes(i+1)?['8-канальный']:[]}));
@@ -389,7 +416,7 @@ const guides = {
 };
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderFreq(); renderGuides(); updateContextInfo();
+  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderMonitoring(); renderFreq(); renderGuides(); updateContextInfo();
 });
 
 function setupNavigation(){document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+b.dataset.tab).classList.add('active');});}
@@ -423,8 +450,8 @@ function showKeyModal(k){
   document.getElementById('km-title').textContent=`Кнопка ${k} [${currentMode}]`;
   let b='';
   if(act.s) b+=`<div class="detail-row"><div class="detail-label">Простое</div><div class="detail-value">${act.s}</div></div>`;
-  if(act.l) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--danger)">Долгое (L)</div><div class="detail-value">${act.l}</div></div>`;
-  if(act.f) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--primary)">После F</div><div class="detail-value">${act.f}</div></div>`;
+  if(act.l) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--primary)">Долгое (L)</div><div class="detail-value">${act.l}</div></div>`;
+  if(act.f) b+=`<div class="detail-row"><div class="detail-label" style="color:var(--key-blue)">После F</div><div class="detail-value">${act.f}</div></div>`;
   if(act.full) b+=`<div class="full-desc">${act.full}</div>`;
   document.getElementById('km-body').innerHTML=b;
   modal.classList.add('show');
@@ -439,7 +466,7 @@ function renderMenu(){
   let html='';
   menuItems.filter(m=>(!s||m.title.toLowerCase().includes(s)||m.code.toLowerCase().includes(s)||m.id.toString().includes(s))&&(c==='all'||m.cat===c))
   .forEach(m=>{
-    html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-id">${m.id}/50</span><span class="c-code">${m.code}</span><span class="c-title">${m.title}</span></div><div class="c-warn">${m.warn||''}</div><div class="c-desc">${m.desc}${m.vals?`<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px;">${m.vals.map(v=>`<span style="background:var(--bg);padding:2px 5px;border-radius:4px;font-size:0.65rem;">${v}</span>`).join('')}</div>`:''}</div></div>`;
+    html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-id">${m.id}/50</span><span class="c-code">${m.code}</span><span class="c-title">${m.title}</span></div><div class="c-warn">${m.warn||''}</div><div class="c-desc">${m.desc}${m.vals?`<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px;">${m.vals.map(v=>`<span style="background:var(--bg);padding:2px 5px;border-radius:0;font-size:0.65rem;">${v}</span>`).join('')}</div>`:''}</div></div>`;
   });
   list.innerHTML=html||'<div class="empty-state">Ничего не найдено</div>';
 }
@@ -450,6 +477,15 @@ function renderSpectrum(){
   let html='';
   specParams.forEach(p=>{
     html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-code" style="color:var(--accent)">${p.id}</span><span class="c-title">${p.title}</span></div><div class="c-desc">${p.desc}</div></div>`;
+  });
+  list.innerHTML=html;
+}
+
+function renderMonitoring(){
+  const list=document.getElementById('monitoring-list');
+  let html='';
+  monitoringParams.forEach(p=>{
+    html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-code" style="color:var(--warn)">${p.id}</span><span class="c-title">${p.title}</span></div><div class="c-desc">${p.desc}</div></div>`;
   });
   list.innerHTML=html;
 }
