@@ -178,11 +178,6 @@ body { padding-bottom: 80px; }
     <div id="guide-flash" class="guide-content"><ul class="checklist" id="checklist-flash"></ul></div>
     <div id="guide-reset" class="guide-content" style="display:none;">
       <ul class="checklist" id="checklist-reset"></ul>
-      <div class="timer-box" id="reset-timer-box">
-        <div>Удерживайте PTT + Fn2</div>
-        <div class="timer-display" id="timer-display">4.0 сек</div>
-        <button class="btn btn-warn" onclick="startResetTimer()">⏱️ Таймер</button>
-      </div>
     </div>
     <div id="guide-channels" class="guide-content" style="display:none;"><ul class="checklist" id="checklist-channels"></ul></div>
   </div>
@@ -464,13 +459,6 @@ function showGuide(type){document.querySelectorAll('.guide-content').forEach(g=>
 function renderGuides(){['flash','reset','channels'].forEach(k=>{document.getElementById('checklist-'+k).innerHTML=guides[k].map((g,i)=>`<li onclick="toggleCheck(this)"><span class="step-num">${i+1}</span><input type="checkbox" onchange="checkStep(this)"><span>${g.t}</span></li>`).join('');});}
 function toggleCheck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;checkStep(cb);}
 function checkStep(cb){cb.closest('li').classList.toggle('done',cb.checked);}
-let resetTimer=null;
-function startResetTimer(){
-  if(resetTimer)return;
-  let t=4.0, d=document.getElementById('timer-display'), b=document.querySelector('#reset-timer-box .btn');
-  b.disabled=true;b.textContent='Удерживайте...';
-  resetTimer=setInterval(()=>{t-=0.1;d.textContent=t.toFixed(1)+' сек';if(t<=0){clearInterval(resetTimer);resetTimer=null;d.textContent='✅ СБРОС';b.disabled=false;b.textContent='⏱️ Таймер';showToast('Сброс выполнен!');document.querySelectorAll('#checklist-reset li').forEach(l=>{l.classList.add('done');l.querySelector('input').checked=true;});}},100);
-}
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 </script>
 </body>
