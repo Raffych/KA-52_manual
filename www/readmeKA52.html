@@ -170,6 +170,12 @@ body { padding-bottom: 80px; }
     <div class="compact-grid" id="spectrum-list"></div>
   </div>
 
+  <div id="tab-monitoring" class="tab-content">
+    <h2 class="section-title" style="margin-top:0">🔬 Детальный мониторинг (MENU → MA)</h2>
+    <div class="info-card" style="margin-bottom:16px;"><b>Навигация:</b> Перемещение по меню — кнопки <b>2</b> и <b>8</b>. Смена значений — кнопки <b>&lt;=</b> и <b>=&gt;</b>.</div>
+    <div class="compact-grid" id="monitoring-list"></div>
+  </div>
+
   <div id="tab-freq" class="tab-content">
     <div class="search-box"><input type="text" id="freq-search" placeholder="Поиск частоты..." oninput="filterFreqs()"></div>
     <div class="filter-bar">
@@ -207,6 +213,7 @@ body { padding-bottom: 80px; }
   <button class="nav-item active" data-tab="keyboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="7" cy="10" r="1.5"/><circle cx="12" cy="10" r="1.5"/><circle cx="17" cy="10" r="1.5"/><circle cx="7" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/><circle cx="17" cy="14" r="1.5"/></svg>Клавиатура</button>
   <button class="nav-item" data-tab="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>Меню</button>
   <button class="nav-item" data-tab="spectrum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M4 20V10M8 20V4M12 20V8M16 20V12M20 20V6"/></svg>Спектр</button>
+  <button class="nav-item" data-tab="monitoring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Мониторинг</button>
   <button class="nav-item" data-tab="freq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M6 8l6 4-6 4V8zM18 8l-6 4 6 4V8z"/></svg>Частоты</button>
   <button class="nav-item" data-tab="guides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Гайды</button>
 </nav>
@@ -376,6 +383,24 @@ const specParams = [
   {id:"DEFAULT_PARAMS",title:"Сброс параметров",desc:"Сброс параметров спектра на заводские."}
 ];
 
+const monitoringParams = [
+  {id:"LNAS",title:"LNAS",desc:"Усиление LNA (Low Noise Amplifier) – ступени усиления сигнала перед микшером."},
+  {id:"LNA",title:"LNA",desc:"Усиление первого каскада LNA – выше = сильнее сигнал, но больше помех."},
+  {id:"PGA",title:"PGA",desc:"Усиление Programmable Gain Amplifier (после LNA) – баланс между чувствительностью и искажениями."},
+  {id:"MIX",title:"MIX",desc:"Усиление миксера (смешивание частот) – выше = лучше динамический диапазон, но больше шумов."},
+  {id:"XTAL_F_MODE_SELECT",title:"XTAL F MODE SELECT",desc:"Режим работы кварцевого фильтра (XTAL). Фильтрация (снижает шум, но может искажать)."},
+  {id:"OFF_AF_RX_DE-EMP",title:"OFF AF RX DE-EMP",desc:"Отключение демфазиса (коррекция предискажений) при приёме."},
+  {id:"GAIN_AFTER_FM_DEMOD",title:"GAIN AFTER FM DEMOD",desc:"Регулирует громкость приёма."},
+  {id:"RF_TX_DEVIATION",title:"RF TX DEVIATION",desc:"Отклонение частоты при передаче (FM deviation) – влияет на ширину полосы передачи (выше = громче)."},
+  {id:"COMPRESS_AF_TX_RATIO",title:"COMPRESS AF TX RATIO",desc:"Коэффициент компрессии аудио при передаче – сжимает динамический диапазон."},
+  {id:"COMPRESS_AF_TX_0_DB",title:"COMPRESS AF TX 0 DB",desc:"Уровень компрессии 0 dB при передаче – точка начала компрессии."},
+  {id:"COMPRESS_AF_TX_NOISE",title:"COMPRESS AF TX NOISE",desc:"Подавление шума в тихих местах."},
+  {id:"MIC_AGC_DISABLE",title:"MIC AGC DISABLE",desc:"Отключение автоматической регулировки усиления микрофона (AGC)."},
+  {id:"AFC_RANGE_SELECT",title:"AFC RANGE SELECT",desc:"Диапазон работы AFC (автоподстройки частоты)."},
+  {id:"AFC_DISABLE",title:"AFC DISABLE",desc:"Отключение AFC."},
+  {id:"AFC_SPEED",title:"AFC SPEED",desc:"Скорость работы AFC."}
+];
+
 const lpdData = Array.from({length:69}, (_,i)=>({ch:i+1, freq:(433.075+i*0.025).toFixed(3), tags:[1,2,6,10,12,17,23].includes(i+1)?['8-канальный']:[]}));
 const pmrData = [{ch:1,freq:"446.00625"},{ch:2,freq:"446.01875"},{ch:3,freq:"446.03125"},{ch:4,freq:"446.04375"},{ch:5,freq:"446.05625"},{ch:6,freq:"446.06875"},{ch:7,freq:"446.08125"},{ch:8,freq:"446.09375"}];
 const cbData = [{ch:1,f:"26.965",t:""},{ch:2,f:"26.975",t:""},{ch:3,f:"26.985",t:""},{ch:4,f:"27.005",t:""},{ch:5,f:"27.015",t:""},{ch:6,f:"27.025",t:""},{ch:7,f:"27.035",t:""},{ch:8,f:"27.055",t:""},{ch:9,f:"27.065",t:"Экстренный",tag:"e"},{ch:10,f:"27.075",t:""},{ch:11,f:"27.085",t:""},{ch:12,f:"27.105",t:""},{ch:13,f:"27.115",t:""},{ch:14,f:"27.125",t:"Туристы",tag:"c"},{ch:15,f:"27.135",t:"Дальнобойщики",tag:"c"},{ch:16,f:"27.155",t:""},{ch:17,f:"27.165",t:""},{ch:18,f:"27.175",t:""},{ch:19,f:"27.185",t:"Дальнобойный СНГ",tag:"c"},{ch:20,f:"27.205",t:"Владивосток Авто"},{ch:21,f:"27.215",t:""},{ch:22,f:"27.225",t:""},{ch:23,f:"27.255",t:""},{ch:24,f:"27.235",t:""},{ch:25,f:"27.245",t:""},{ch:26,f:"27.265",t:""},{ch:27,f:"27.275",t:""},{ch:28,f:"27.285",t:""},{ch:29,f:"27.295",t:""},{ch:30,f:"27.305",t:"Цифровые (DRM)",tag:"w"},{ch:31,f:"27.315",t:""},{ch:32,f:"27.325",t:""},{ch:33,f:"27.335",t:""},{ch:34,f:"27.345",t:""},{ch:35,f:"27.355",t:""},{ch:36,f:"27.365",t:""},{ch:37,f:"27.375",t:""},{ch:38,f:"27.385",t:""},{ch:39,f:"27.395",t:""},{ch:40,f:"27.405",t:""}];
@@ -390,7 +415,7 @@ const guides = {
 };
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderFreq(); renderGuides(); updateContextInfo();
+  setupNavigation(); setupModeSwitcher(); setupFilters(); renderKeypad(); renderMenu(); renderSpectrum(); renderMonitoring(); renderFreq(); renderGuides(); updateContextInfo();
 });
 
 function setupNavigation(){document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+b.dataset.tab).classList.add('active');});}
@@ -451,6 +476,15 @@ function renderSpectrum(){
   let html='';
   specParams.forEach(p=>{
     html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-code" style="color:var(--accent)">${p.id}</span><span class="c-title">${p.title}</span></div><div class="c-desc">${p.desc}</div></div>`;
+  });
+  list.innerHTML=html;
+}
+
+function renderMonitoring(){
+  const list=document.getElementById('monitoring-list');
+  let html='';
+  monitoringParams.forEach(p=>{
+    html+=`<div class="compact-card" onclick="this.classList.toggle('open')"><div class="compact-header"><span class="c-code" style="color:var(--warn)">${p.id}</span><span class="c-title">${p.title}</span></div><div class="c-desc">${p.desc}</div></div>`;
   });
   list.innerHTML=html;
 }
